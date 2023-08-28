@@ -5,7 +5,7 @@ import Tile from "./Tile";
 export default function Middle(){
   return (
     <>
-      <Input placeholder='Enter the amount'></Input>
+      <Input type='number' placeholder='Enter the amount'></Input>
       <div className="flex flex-wrap justify-center pt-5">
         <Tile tileName='Expense'></Tile>
         <Tile tileName='Income'></Tile>
