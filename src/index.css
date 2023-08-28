@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+  background: url(img\dollarBg.jpg) no-repeat center center fixed;
+  background-size: cover;
+  background-position: fixed;
+}
+
+h1{
+  font-family: 'Bebas Neue', sans-serif;
+}
