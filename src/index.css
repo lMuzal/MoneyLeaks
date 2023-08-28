@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body{
-  background: url(img\dollarBg.jpg) no-repeat center center fixed;
+  background: url(img\narrowDollarBg.jpg) no-repeat center center fixed;
   background-size: cover;
   background-position: fixed;
 }
