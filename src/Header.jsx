@@ -1,6 +1,7 @@
 import MenuButton from "./MenuButton";
 
 export default function Header() {
+
   return (
     <div className="flex justify-center">
       <MenuButton></MenuButton>
