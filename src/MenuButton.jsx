@@ -12,11 +12,11 @@ console.log(isClicked)
 
   return(
     <>
-      <div className="flex justify-center h-full w-full bg-black/90 z-9 fixed ease-in-out duration-1000" style={{translate: isClicked ? '0px' : '-1500px'}}>
+      <div className="mx-auto flex justify-center h-full w-full bg-black/90 z-9 fixed ease-in-out duration-1000" style={{translate: isClicked ? '0px' : '-1500px'}}>
         <div className="flex flex-col m-auto">
-          <h1 className="text-amber-400 text-3xl pb-7">Login</h1>
-          <h1 className="text-amber-400 text-3xl">Home</h1>
-          <h1 className="text-amber-400 text-3xl">About</h1>
+          <h1 className="text-amber-400 text-3xl pb-7 mx-auto">Login</h1>
+          <h1 className="text-amber-400 text-3xl mx-auto">Home</h1>
+          <h1 className="text-amber-400 text-3xl mx-auto">About</h1>
         </div>
       </div>
       <button onClick={menuClick}>
