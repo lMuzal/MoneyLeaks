@@ -28,7 +28,7 @@ const incomeButtonClick = () => {
     <form className="flex flex-col">
       <Input type='number' placeholder='Enter the amount'></Input>
       <Calendar className="mt-3 mx-auto bg-amber-400 hidden"/>
-      <div className="flex justify-center">
+      <div className="flex justify-center my-2">
         <TileButton buttonName='Expense' category='primary' onClick={expenseButtonClick}></TileButton>
         <TileButton buttonName='Income' category='primary' onClick={incomeButtonClick}></TileButton>
       </div>
@@ -48,7 +48,7 @@ const incomeButtonClick = () => {
           <TileButton buttonName="Other" category='primaryIncome'></TileButton>
         </div>
       ) : null}
-      <input type="submit" value="Submit" className="text-amber-400 border sm:border-2 font-bold tracking-wider border-amber-400 rounded ease-in-out duration-300 w-1/6 mt-5 mx-auto hover:text-lime-900 hover:bg-amber-400"/>
+      <input type="submit" value="Submit" className="text-red-700 border sm:border-2 font-bold tracking-wider border-amber-400 rounded ease-in-out duration-300 mt-5 mx-auto hover:text-amber-400 hover:bg-red-700 px-7 py-2"/>
     </form>
   )
 }
