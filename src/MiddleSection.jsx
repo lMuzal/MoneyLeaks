@@ -1,22 +1,21 @@
 import { useState } from "react";
-import Input from "./Input";
-import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
 import TileButton from "./TileButton";
-
 
 export default function MiddleSection(){
 
+const [data, setData] = useState([]);
+const [dataToDisplay, setDataToDisplay] = useState([]);
+const [amount, setAmount] = useState('');
+const [date, setDate] = useState(new Date().toLocaleDateString('en-gb'));
 const [expenseClick, setExpenseClick] = useState(false);
 const [incomeClick, setIncomeClick] = useState(false);
 const [secondaryExpenseClickAutomobile, setSecondaryExpenseClickAutomobile] = useState(false);
 const [secondaryExpenseClickBills, setSecondaryExpenseClickBills] = useState(false);
 const [secondaryExpenseClickChildren, setSecondaryExpenseClickChildren] = useState(false);
 const [secondaryExpenseClickClothing, setSecondaryExpenseClickClothing] = useState(false);
-const [secondaryExpenseClickDiningOut, setSecondaryExpenseClickDiningOut] = useState(false);
+const [secondaryExpenseClickFood, setSecondaryExpenseClickFood] = useState(false);
 const [secondaryExpenseClickEntertainment, setSecondaryExpenseClickEntertainment] = useState(false);
 const [secondaryExpenseClickGifts, setSecondaryExpenseClickGifts] = useState(false);
-const [secondaryExpenseClickGroceries, setSecondaryExpenseClickGroceries] = useState(false);
 const [secondaryExpenseClickHealthcare, setSecondaryExpenseClickHealthcare] = useState(false);
 const [secondaryExpenseClickHousehold, setSecondaryExpenseClickHousehold] = useState(false);
 const [secondaryExpenseClickJobExpense, setSecondaryExpenseClickJobExpense] = useState(false);
@@ -31,10 +30,9 @@ const expenseButtonClick = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -51,10 +49,9 @@ const incomeButtonClick = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -70,10 +67,9 @@ const secondaryExpenseButtonClickAutomobile = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -89,10 +85,9 @@ const secondaryExpenseButtonClickBills = () => {
     setSecondaryExpenseClickAutomobile(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -108,10 +103,9 @@ const secondaryExpenseButtonClickChildren = () => {
     setSecondaryExpenseClickAutomobile(false);
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -127,29 +121,9 @@ const secondaryExpenseButtonClickClothing = () => {
     setSecondaryExpenseClickAutomobile(false);
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
-    setSecondaryExpenseClickHealthcare(false);
-    setSecondaryExpenseClickHousehold(false);
-    setSecondaryExpenseClickJobExpense(false);
-    setSecondaryExpenseClickPets(false);
-    setSecondaryExpenseClickOther(false);
-  }
-};
-
-const secondaryExpenseButtonClickDiningOut = () => {
-  setSecondaryExpenseClickDiningOut(!secondaryExpenseClickDiningOut);
-  if (!secondaryExpenseClickDiningOut) {
-    setIncomeClick(false);
-    setSecondaryExpenseClickAutomobile(false);
-    setSecondaryExpenseClickBills(false);
-    setSecondaryExpenseClickChildren(false);
-    setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickEntertainment(false);
-    setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -166,14 +140,31 @@ const secondaryExpenseButtonClickEntertainment = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
     setSecondaryExpenseClickPets(false);
     setSecondaryExpenseClickOther(false);  
+  }
+};
+
+const secondaryExpenseButtonClickFood = () => {
+  setSecondaryExpenseClickFood(!secondaryExpenseClickFood);
+  if (!secondaryExpenseClickFood) {
+    setIncomeClick(false);
+    setSecondaryExpenseClickAutomobile(false);
+    setSecondaryExpenseClickBills(false);
+    setSecondaryExpenseClickChildren(false);
+    setSecondaryExpenseClickClothing(false);
+    setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickGifts(false);
+    setSecondaryExpenseClickHealthcare(false);
+    setSecondaryExpenseClickHousehold(false);
+    setSecondaryExpenseClickJobExpense(false);
+    setSecondaryExpenseClickPets(false);
+    setSecondaryExpenseClickOther(false);
   }
 };
 
@@ -185,28 +176,8 @@ const secondaryExpenseButtonClickGifts = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
-    setSecondaryExpenseClickGroceries(false);
-    setSecondaryExpenseClickHealthcare(false);
-    setSecondaryExpenseClickHousehold(false);
-    setSecondaryExpenseClickJobExpense(false);
-    setSecondaryExpenseClickPets(false);
-    setSecondaryExpenseClickOther(false);
-  }
-};
-
-const secondaryExpenseButtonClickGroceries = () => {
-  setSecondaryExpenseClickGroceries(!secondaryExpenseClickGroceries);
-  if (!secondaryExpenseClickGroceries) {
-    setIncomeClick(false);
-    setSecondaryExpenseClickAutomobile(false);
-    setSecondaryExpenseClickBills(false);
-    setSecondaryExpenseClickChildren(false);
-    setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
-    setSecondaryExpenseClickEntertainment(false);
-    setSecondaryExpenseClickGifts(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -223,10 +194,9 @@ const secondaryExpenseButtonClickHealthcare = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
     setSecondaryExpenseClickPets(false);
@@ -242,10 +212,9 @@ const secondaryExpenseButtonClickHousehold = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickJobExpense(false);
     setSecondaryExpenseClickPets(false);
@@ -261,10 +230,9 @@ const secondaryExpenseButtonClickJobExpense = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickPets(false);
@@ -280,10 +248,9 @@ const secondaryExpenseButtonClickPets = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -299,10 +266,9 @@ const secondaryExpenseButtonClickOther = () => {
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
     setSecondaryExpenseClickClothing(false);
-    setSecondaryExpenseClickDiningOut(false);
     setSecondaryExpenseClickEntertainment(false);
+    setSecondaryExpenseClickFood(false);
     setSecondaryExpenseClickGifts(false);
-    setSecondaryExpenseClickGroceries(false);
     setSecondaryExpenseClickHealthcare(false);
     setSecondaryExpenseClickHousehold(false);
     setSecondaryExpenseClickJobExpense(false);
@@ -310,10 +276,28 @@ const secondaryExpenseButtonClickOther = () => {
   }
 };
 
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const data = {
+    amount, 
+    date: date.target.value, 
+    expenseClick, incomeClick, 
+    secondaryExpenseClickAutomobile, secondaryExpenseClickBills, secondaryExpenseClickChildren, secondaryExpenseClickClothing, secondaryExpenseClickEntertainment, secondaryExpenseClickFood, secondaryExpenseClickGifts, secondaryExpenseClickHealthcare, secondaryExpenseClickHousehold, secondaryExpenseClickJobExpense, secondaryExpenseClickPets, secondaryExpenseClickOther
+  }
+
+  setData(data);
+  setDataToDisplay(JSON.stringify(data.amount));
+
+  console.log(data);
+}
+
+console.log(date)
   return (
-    <form className="flex flex-col">
-      <Input type='number' placeholder='Enter the amount'></Input>
-      <Calendar className="mt-3 mx-auto bg-amber-400 hidden"/>
+    <>
+    <form className="flex flex-col" onSubmit={handleSubmit}>
+      {/* <Input type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)}></Input> */}
+      <input required type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center mb-3"></input>
+      <input required type='date' defaultValue={date} onChange={setDate} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center"></input>
       <div className="flex justify-center my-2">
         <TileButton buttonName='Expense' category='primary' onClick={expenseButtonClick}></TileButton>
         <TileButton buttonName='Income' category='primary' onClick={incomeButtonClick}></TileButton>
@@ -324,10 +308,9 @@ const secondaryExpenseButtonClickOther = () => {
           <TileButton buttonName='Bills' category='primaryExpense'onClick={secondaryExpenseButtonClickBills}></TileButton>
           <TileButton buttonName='Children' category='primaryExpense' onClick={secondaryExpenseButtonClickChildren}></TileButton>
           <TileButton buttonName='Clothing' category='primaryExpense'onClick={secondaryExpenseButtonClickClothing}></TileButton>
-          <TileButton buttonName='Dining Out' category='primaryExpense'onClick={secondaryExpenseButtonClickDiningOut}></TileButton>
           <TileButton buttonName='Entertainment' category='primaryExpense'onClick={secondaryExpenseButtonClickEntertainment}></TileButton>
+          <TileButton buttonName='Food' category='primaryExpense'onClick={secondaryExpenseButtonClickFood}></TileButton>
           <TileButton buttonName='Gifts' category='primaryExpense'onClick={secondaryExpenseButtonClickGifts}></TileButton>
-          <TileButton buttonName='Groceries' category='primaryExpense' onClick={secondaryExpenseButtonClickGroceries}></TileButton>
           <TileButton buttonName='Helathcare' category='primaryExpense'onClick={secondaryExpenseButtonClickHealthcare}></TileButton>
           <TileButton buttonName='Household' category='primaryExpense'onClick={secondaryExpenseButtonClickHousehold}></TileButton>
           <TileButton buttonName='Job Expense' category='primaryExpense'onClick={secondaryExpenseButtonClickJobExpense}></TileButton>
@@ -375,13 +358,7 @@ const secondaryExpenseButtonClickOther = () => {
         </div>
       ) : null}   
 
-      {secondaryExpenseClickGroceries ? (
-        <div className="flex flex-wrap justify-center ease-in-out duration-300 border-t-2 border-amber-400/50 border-dashed mt-2">
-          <TileButton buttonName='Food' category='secondaryExpenseGroceries'></TileButton>
-          <TileButton buttonName='Alcohol' category='secondaryExpenseGroceries'></TileButton>
-          <TileButton buttonName='Other' category='secondaryExpenseGroceries'></TileButton>
-        </div>
-      ) : null}
+      
       {secondaryExpenseClickHealthcare ? (
         <div className="flex flex-wrap justify-center ease-in-out duration-300 border-t-2 border-amber-400/50 border-dashed mt-2">
           <TileButton buttonName='Doctor appointments' category='secondaryExpenseGroceries'></TileButton>
@@ -409,5 +386,7 @@ const secondaryExpenseButtonClickOther = () => {
       
       <input type="submit" value="Submit" className="text-red-700 border sm:border-2 font-bold tracking-wider border-amber-400 rounded ease-in-out duration-300 mt-5 mx-auto hover:text-amber-400 hover:bg-red-700 px-7 py-2"/>
     </form>
+    <div className="text-2xl text-amber-400 mx-auto text-center mt-5">{dataToDisplay}</div>
+    </>
   )
 }
