@@ -8,6 +8,7 @@ const [dataToDisplay, setDataToDisplay] = useState([]);
 const [amount, setAmount] = useState('');
 const [date, setDate] = useState(new Date().toLocaleDateString('en-gb'));
 const [expenseClick, setExpenseClick] = useState(false);
+const [expenseClickValue, setExpenseClickValue] = useState(null);
 const [incomeClick, setIncomeClick] = useState(false);
 const [secondaryExpenseClickAutomobile, setSecondaryExpenseClickAutomobile] = useState(false);
 const [secondaryExpenseClickBills, setSecondaryExpenseClickBills] = useState(false);
@@ -25,6 +26,7 @@ const [secondaryExpenseClickOther, setSecondaryExpenseClickOther] = useState(fal
 const expenseButtonClick = () => {
   setExpenseClick(!expenseClick);
   if (!expenseClick) {
+    setExpenseClickValue('Expense');
     setIncomeClick(false);
     setSecondaryExpenseClickAutomobile(false);
     setSecondaryExpenseClickBills(false);
@@ -279,25 +281,22 @@ const secondaryExpenseButtonClickOther = () => {
 const handleSubmit = (e) => {
   e.preventDefault();
   const data = {
-    amount, 
     date: date.target.value, 
-    expenseClick, incomeClick, 
+    amount, 
+    expenseClickValue, incomeClick, 
     secondaryExpenseClickAutomobile, secondaryExpenseClickBills, secondaryExpenseClickChildren, secondaryExpenseClickClothing, secondaryExpenseClickEntertainment, secondaryExpenseClickFood, secondaryExpenseClickGifts, secondaryExpenseClickHealthcare, secondaryExpenseClickHousehold, secondaryExpenseClickJobExpense, secondaryExpenseClickPets, secondaryExpenseClickOther
   }
 
   setData(data);
-  setDataToDisplay(JSON.stringify(data.amount));
-
-  console.log(data);
+  setDataToDisplay(Object.values(data));
+  console.log(dataToDisplay);
 }
 
-console.log(date)
   return (
     <>
     <form className="flex flex-col" onSubmit={handleSubmit}>
-      {/* <Input type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)}></Input> */}
       <input required type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center mb-3"></input>
-      <input required type='date' defaultValue={date} onChange={setDate} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center"></input>
+      <input required type='date' placeholder="Enter the date" onChange={setDate} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center"></input>
       <div className="flex justify-center my-2">
         <TileButton buttonName='Expense' category='primary' onClick={expenseButtonClick}></TileButton>
         <TileButton buttonName='Income' category='primary' onClick={incomeButtonClick}></TileButton>
@@ -386,7 +385,22 @@ console.log(date)
       
       <input type="submit" value="Submit" className="text-red-700 border sm:border-2 font-bold tracking-wider border-amber-400 rounded ease-in-out duration-300 mt-5 mx-auto hover:text-amber-400 hover:bg-red-700 px-7 py-2"/>
     </form>
-    <div className="text-2xl text-amber-400 mx-auto text-center mt-5">{dataToDisplay}</div>
+    <div className="text-amber-400 mx-auto text-center">
+      <table className="mx-auto mt-3 border-2 border-amber-400">
+          <tr className="border-b-4 border-amber-400"> 
+              <th className="pt-1 px-2 border-r-2 border-amber-400">Date</th>
+              <th className="pt-1 px-2 border-r-2 border-amber-400">Amount</th>
+              <th className="pt-1 px-2 border-r-2 border-amber-400">Exp./Inc.</th>
+              <th className="pt-1 px-2 border-r-2 border-amber-400">Cat. lvl 1</th>
+          </tr>
+          <tr>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[0]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[1]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[2]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[3]}</td>
+          </tr>
+      </table>
+    </div>
     </>
   )
 }
