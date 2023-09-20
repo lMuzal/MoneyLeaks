@@ -299,7 +299,7 @@ const handleSubmit = (e) => {
 
 
   sessionStorage.getItem("entries");
-  entries.push(JSON.stringify(dataToDisplay);
+  entries.push(JSON.stringify(dataToDisplay));
   sessionStorage.setItem("entries", JSON.stringify(entries));
 }
 
