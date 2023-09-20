@@ -6,11 +6,13 @@ export default function MiddleSection(){
 const [data, setData] = useState([]);
 const [dataToDisplay, setDataToDisplay] = useState([]);
 const [amount, setAmount] = useState('');
-const [date, setDate] = useState(new Date().toLocaleDateString('en-gb'));
+const [date, setDate] = useState(new Date().toLocaleDateString());
 const [expenseClick, setExpenseClick] = useState(false);
 const [expenseClickValue, setExpenseClickValue] = useState(null);
 const [incomeClick, setIncomeClick] = useState(false);
+const [incomeClickValue, setIncomeClickValue] = useState(null);
 const [secondaryExpenseClickAutomobile, setSecondaryExpenseClickAutomobile] = useState(false);
+const [secondaryExpenseClickAutomobileValue, setSecondaryExpenseClickAutomobileValue] = useState(null);
 const [secondaryExpenseClickBills, setSecondaryExpenseClickBills] = useState(false);
 const [secondaryExpenseClickChildren, setSecondaryExpenseClickChildren] = useState(false);
 const [secondaryExpenseClickClothing, setSecondaryExpenseClickClothing] = useState(false);
@@ -46,6 +48,7 @@ const expenseButtonClick = () => {
 const incomeButtonClick = () => {
   setIncomeClick(!incomeClick);
   if(!incomeClick) {
+    setIncomeClickValue('Income');
     setExpenseClick(false);
     setSecondaryExpenseClickAutomobile(false);
     setSecondaryExpenseClickBills(false);
@@ -65,6 +68,7 @@ const incomeButtonClick = () => {
 const secondaryExpenseButtonClickAutomobile = () => {
   setSecondaryExpenseClickAutomobile(!secondaryExpenseClickAutomobile);
   if (!secondaryExpenseClickAutomobile) {
+    setSecondaryExpenseClickAutomobileValue("Automobile")
     setIncomeClick(false);
     setSecondaryExpenseClickBills(false);
     setSecondaryExpenseClickChildren(false);
@@ -278,25 +282,34 @@ const secondaryExpenseButtonClickOther = () => {
   }
 };
 
+
+
 const handleSubmit = (e) => {
   e.preventDefault();
   const data = {
-    date: date.target.value, 
+    date: date.target.value,
     amount, 
-    expenseClickValue, incomeClick, 
-    secondaryExpenseClickAutomobile, secondaryExpenseClickBills, secondaryExpenseClickChildren, secondaryExpenseClickClothing, secondaryExpenseClickEntertainment, secondaryExpenseClickFood, secondaryExpenseClickGifts, secondaryExpenseClickHealthcare, secondaryExpenseClickHousehold, secondaryExpenseClickJobExpense, secondaryExpenseClickPets, secondaryExpenseClickOther
+    expenseClickValue, incomeClickValue, 
+    secondaryExpenseClickAutomobileValue, secondaryExpenseClickBills, secondaryExpenseClickChildren, secondaryExpenseClickClothing, secondaryExpenseClickEntertainment, secondaryExpenseClickFood, secondaryExpenseClickGifts, secondaryExpenseClickHealthcare, secondaryExpenseClickHousehold, secondaryExpenseClickJobExpense, secondaryExpenseClickPets, secondaryExpenseClickOther
   }
 
   setData(data);
   setDataToDisplay(Object.values(data));
   console.log(dataToDisplay);
+
+
+  sessionStorage.getItem("entries");
+  entries.push(JSON.stringify(dataToDisplay);
+  sessionStorage.setItem("entries", JSON.stringify(entries));
 }
+
+
 
   return (
     <>
-    <form className="flex flex-col" onSubmit={handleSubmit}>
-      <input required type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center mb-3"></input>
-      <input required type='date' placeholder="Enter the date" onChange={setDate} className="mx-auto w-1/2 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center"></input>
+    <form className="flex flex-col justify-center" onSubmit={handleSubmit}>
+      <input required type='number'placeholder='Enter the amount' value={amount} onChange={(e) => setAmount(e.target.value)} className="mx-auto bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center mb-3"></input>
+      <input required type='date' defaultValue={date} placeholder="Enter the date" onChange={setDate} className="mx-auto h-7 bg-transparent border-2 border-amber-400 rounded text-amber-400 text-center"></input>
       <div className="flex justify-center my-2">
         <TileButton buttonName='Expense' category='primary' onClick={expenseButtonClick}></TileButton>
         <TileButton buttonName='Income' category='primary' onClick={incomeButtonClick}></TileButton>
@@ -346,14 +359,12 @@ const handleSubmit = (e) => {
       {secondaryExpenseClickChildren ? (
         <div className="flex flex-wrap justify-center ease-in-out duration-300 border-t-2 border-amber-400/50 border-dashed mt-2">
           <TileButton buttonName='Children' category='secondaryExpenseGroceries'></TileButton>
-          
         </div>
       ) : null}
 
       {secondaryExpenseClickClothing ? (
         <div className="flex flex-wrap justify-center ease-in-out duration-300 border-t-2 border-amber-400/50 border-dashed mt-2">
           <TileButton buttonName='Pants' category='secondaryExpenseGroceries'></TileButton>
-          
         </div>
       ) : null}   
 
@@ -385,19 +396,15 @@ const handleSubmit = (e) => {
       
       <input type="submit" value="Submit" className="text-red-700 border sm:border-2 font-bold tracking-wider border-amber-400 rounded ease-in-out duration-300 mt-5 mx-auto hover:text-amber-400 hover:bg-red-700 px-7 py-2"/>
     </form>
-    <div className="text-amber-400 mx-auto text-center">
-      <table className="mx-auto mt-3 border-2 border-amber-400">
-          <tr className="border-b-4 border-amber-400"> 
-              <th className="pt-1 px-2 border-r-2 border-amber-400">Date</th>
-              <th className="pt-1 px-2 border-r-2 border-amber-400">Amount</th>
-              <th className="pt-1 px-2 border-r-2 border-amber-400">Exp./Inc.</th>
-              <th className="pt-1 px-2 border-r-2 border-amber-400">Cat. lvl 1</th>
-          </tr>
+    <div className="text-amber-400 mx-auto text-center mb-10">
+      <h2 className="font-bold pt-3">Latest Records</h2>
+      <table className="mx-auto mt-1 border-2 border-amber-400">
           <tr>
               <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[0]}</td>
               <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[1]}</td>
-              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[2]}</td>
-              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[3]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[2] || dataToDisplay[3]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{dataToDisplay[4]}</td>
+              <td className="px-2 border-r-2 border-amber-400">{}</td>
           </tr>
       </table>
     </div>
