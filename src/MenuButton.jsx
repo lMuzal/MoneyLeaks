@@ -12,15 +12,15 @@ console.log(isClicked)
 
   return(
     <>
-      <div className="mx-auto flex justify-center h-full w-full bg-black/90 z-9 fixed ease-in-out duration-1000" style={{translate: isClicked ? '0px' : '-1500px'}}>
+      <div className="fixed flex justify-center w-full h-full mx-auto duration-1000 ease-in-out bg-black/90 z-9" style={{translate: isClicked ? '0px' : '-2000px'}}>
         <div className="flex flex-col m-auto">
-          <h1 className="text-amber-400 text-3xl pb-7 mx-auto">Login</h1>
-          <h1 className="text-amber-400 text-3xl mx-auto">Home</h1>
-          <h1 className="text-amber-400 text-3xl mx-auto">About</h1>
+          <h1 className="mx-auto text-3xl text-amber-400 pb-7">Login</h1>
+          <h1 className="mx-auto text-3xl text-amber-400">Home</h1>
+          <h1 className="mx-auto text-3xl text-amber-400">About</h1>
         </div>
       </div>
       <button onClick={menuClick}>
-      <i className="fa fa-sharp fa-solid fa-bars text-2xl text-amber-400 m-5 absolute top-0 left-0 sm:text-4xl sm:m-8 hover:text-amber-600 ease-in-out duration-1000 z-10" style={{rotate: isClicked ? 'z 360deg' : 'z 0deg'}}></i>
+      <i className="absolute top-0 left-0 z-10 m-5 text-2xl duration-1000 ease-in-out fa fa-sharp fa-solid fa-bars text-amber-400 sm:text-4xl sm:m-8 hover:text-amber-600" style={{rotate: isClicked ? 'z 360deg' : 'z 0deg'}}></i>
       </button>
     </>
   )

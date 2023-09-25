@@ -1,11 +1,12 @@
 import MenuButton from "./MenuButton";
 
 export default function Header() {
-
   return (
     <div className="flex justify-center">
       <MenuButton></MenuButton>
-      <h1 className="text-5xl text-amber-400 flex justify-center mt-4 sm:text-8xl z-10 mb-5">MONEY LEAKS</h1>
+      <h1 className="z-10 flex justify-center mt-4 mb-5 text-5xl text-amber-400 sm:text-8xl">
+        MONEY LEAKS
+      </h1>
     </div>
-  )
+  );
 }
