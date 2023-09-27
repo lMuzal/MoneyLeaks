@@ -1,11 +1,21 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./Header";
 import MiddleSection from "./MiddleSection";
+import LoginPage from "./Loginpage";
+import AccountSettings from "./AccountSettings"
 
-export default function App(){
-  return(
+export default function App() {
+  return (
     <>
+      <Router>
       <Header></Header>
-      <MiddleSection></MiddleSection>
+        <Routes>
+          <Route path="/MoneyLeaks" element={<MiddleSection />} />
+          <Route index element={<MiddleSection />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/account" element={<AccountSettings />}/>
+        </Routes>
+      </Router>
     </>
-  )
+  );
 }

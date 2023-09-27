@@ -378,7 +378,7 @@ export default function MiddleSection() {
           placeholder="Enter the amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="mx-auto mb-3 text-center bg-transparent border-2 rounded border-amber-400 text-amber-400"
+          className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
         ></input>
         <input
           required
@@ -386,7 +386,7 @@ export default function MiddleSection() {
           defaultValue={date}
           placeholder="Enter the date"
           onChange={setDate}
-          className="mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
+          className="w-1/2 mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
         ></input>
         <div className="flex justify-center my-2">
           <TileButton
