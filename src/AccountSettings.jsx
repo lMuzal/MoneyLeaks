@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types
-function ClickableButton({ onClick, label }) {
+function ClickableButton({ onClick, label, className }) {
   const [highlighted, setHighlighted] = useState(false);
 
   const handleClick = () => {
@@ -10,9 +10,12 @@ function ClickableButton({ onClick, label }) {
   };
 
   return (
-    <button onClick={handleClick} className={highlighted ? "highlighted" : ""}>
-      {label}
-    </button>
+      <button
+        onClick={handleClick}
+        className={`${highlighted ? "highlighted" : ""} ${className}`}
+      >
+        {label}
+      </button>
   );
 }
 
@@ -46,14 +49,16 @@ function App() {
       >
         Create Button
       </button>
-
-      {buttons.map((button) => (
-        <ClickableButton
-          key={button.id}
-          onClick={() => {}}
-          label={button.label}
-        />
-      ))}
+      <div className="flex flex-wrap justify-center mt-5">
+        {buttons.map((button) => (
+          <ClickableButton
+            key={button.id}
+            onClick={() => {}}
+            label={button.label}
+            className="px-2 mx-2 mt-2 border-2 rounded text-amber-400 border-amber-400"
+          />
+        ))}
+      </div>
 
       <style>
         {`

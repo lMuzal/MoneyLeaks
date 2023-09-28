@@ -3,6 +3,8 @@ import Header from "./Header";
 import MiddleSection from "./MiddleSection";
 import LoginPage from "./Loginpage";
 import AccountSettings from "./AccountSettings"
+import NewAccountSettings from "./NewAccountSettings";
+
 
 export default function App() {
   return (
@@ -14,6 +16,7 @@ export default function App() {
           <Route index element={<MiddleSection />} />
           <Route path="/MoneyLeaks/login" element={<LoginPage />} />
           <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
+          <Route path="/MoneyLeaks/accountTest" element={<NewAccountSettings />} />
         </Routes>
       </Router>
     </>

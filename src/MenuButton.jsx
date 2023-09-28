@@ -40,6 +40,13 @@ console.log(isClicked)
           >
             Account
           </Link>
+          <Link
+            to="/MoneyLeaks/accounttest"
+            className="mx-auto text-3xl text-amber-400"
+            onClick={menuClick}
+          >
+            Account Test
+          </Link>
         </div>
       </div>
       <button onClick={menuClick}>
