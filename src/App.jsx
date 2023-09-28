@@ -8,12 +8,12 @@ export default function App() {
   return (
     <>
       <Router>
-      <Header></Header>
+        <Header></Header>
         <Routes>
           <Route path="/MoneyLeaks" element={<MiddleSection />} />
           <Route index element={<MiddleSection />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/account" element={<AccountSettings />}/>
+          <Route path="/MoneyLeaks/login" element={<LoginPage />} />
+          <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
         </Routes>
       </Router>
     </>
