@@ -2,8 +2,8 @@
 export default function TileButton(props){
   return(
     <label> 
-      <input type="radio" className='radio-button peer sr-only' name={props.category} value={props.buttonName}/>
-      <div className="text-amber-400 border sm:border-2 font-bold tracking-wider border-amber-400 py-1/2 px-2 mx-1 mt-2 rounded ease-in-out duration-300 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500 sm:px-5" onClick={props.onClick}>{props.buttonName}</div>
+      <input type="radio" className='sr-only radio-button peer' name={props.category} value={props.buttonName}/>
+      <div className="px-2 mx-1 mt-2 font-bold tracking-wider duration-300 ease-in-out border rounded text-amber-400 sm:border-2 border-amber-400 py-1/2 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500 sm:px-5" onClick={props.onClick}>{props.buttonName}</div>
     </label>
   )
 }

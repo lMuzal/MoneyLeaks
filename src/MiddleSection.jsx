@@ -75,6 +75,9 @@ export default function MiddleSection() {
   const [secondaryExpenseClickOtherValue, setSecondaryExpenseClickOtherValue] =
     useState(null);
 
+  const [filteredDataIndex0, setFilteredDataIndex0] = useState();
+
+
   const expenseButtonClick = () => {
     setExpenseClick(!expenseClick);
     if (!expenseClick) {
@@ -365,8 +368,14 @@ export default function MiddleSection() {
     };
 
     setData(formData);
-    setDataToDisplay(Object.values(data));
+    const dataArray = Object.values(data);
+    setDataToDisplay([...dataToDisplay, dataArray]);
+    for (let index = 0; index < dataToDisplay.length; index++) {
+     setFilteredDataIndex0(dataToDisplay[index][0]);
+    }
     console.log(dataToDisplay);
+    sessionStorage.setItem(dataToDisplay);
+    location.reload()
   };
 
   return (
@@ -587,11 +596,9 @@ export default function MiddleSection() {
         <h2 className="pt-3 font-bold">Latest Records</h2>
         <table className="mx-auto mt-1 border-2 border-amber-400">
           <tr>
+            <td className="px-2 border-r-2 border-amber-400">{}</td>
             <td className="px-2 border-r-2 border-amber-400">
-              {dataToDisplay[0]}
-            </td>
-            <td className="px-2 border-r-2 border-amber-400">
-              {dataToDisplay[1]}
+              {filteredDataIndex0}
             </td>
             <td className="px-2 border-r-2 border-amber-400">
               {dataToDisplay[2] || dataToDisplay[3]}

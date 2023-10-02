@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 // eslint-disable-next-line react/prop-types
 function ClickableButton({ onClick, onDelete, label, className }) {
@@ -24,11 +24,11 @@ function ClickableButton({ onClick, onDelete, label, className }) {
   };
 
   return (
-    <div className="flex justify-center space-x-2">
+    <div className="flex items-center space-x-2">
       <button
         onClick={handleClick}
         className={`${
-          highlighted ? "bg-yellow-300" : "bg-blue-500"
+          highlighted ? 'bg-yellow-300' : 'bg-blue-500'
         } px-4 py-2 rounded ${className}`}
       >
         {label}
@@ -42,7 +42,7 @@ function ClickableButton({ onClick, onDelete, label, className }) {
 
       {showConfirmation && (
         <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full">
-          <div className="p-4 bg-white rounded-lg">
+          <div className="p-4 bg-white rounded-lg shadow-md">
             <p className="mb-4">{`Are you sure you want to delete "${label}"?`}</p>
             <div className="flex justify-end">
               <button
@@ -69,6 +69,9 @@ function App() {
   const [buttons, setButtons] = useState([]);
   const [newButtonName, setNewButtonName] = useState("");
   const [buttonCategory, setButtonCategory] = useState(null); // Track the category of the previous button
+  const [subButtons, setSubButtons] = useState([]); // Track sub-buttons
+  const [selectedButton, setSelectedButton] = useState(null); // Track the previously chosen button
+  const [selectedCategory, setSelectedCategory] = useState(null); // Track the selected category
 
   const handleInitialButtonClick = () => {
     if (newButtonName.trim() !== "" && buttonCategory !== null) {
@@ -79,28 +82,54 @@ function App() {
       };
       setButtons([...buttons, newButton]);
       setNewButtonName(""); // Clear the input field after creating the button
+      setSelectedButton(newButton); // Set the selected button as the newly created one
     }
   };
 
   const handleDeleteButton = (id) => {
       const updatedButtons = buttons.filter((button) => button.id !== id);
       setButtons(updatedButtons);
+
+      // Clear sub-buttons if the selected button is deleted
+      if (selectedButton && selectedButton.id === id) {
+        setSubButtons([]);
+        setSelectedButton(null);
+      }
+  };
+
+  const handleCreateSubGroup = () => {
+    if (selectedButton) {
+      setSubButtons([]);
+    }
+  };
+
+  const handleCreateSubButton = () => {
+    if (selectedButton && newButtonName.trim() !== "") {
+      const newSubButton = {
+        id: Date.now(),
+        label: newButtonName,
+      };
+      setSubButtons([...subButtons, newSubButton]);
+      setNewButtonName(""); // Clear the input field after creating the sub-button
+    }
   };
 
   return (
-    <div className="flex flex-col justify-center mx-auto">
+    <div>
       <input
         type="text"
         placeholder="Enter button name"
         value={newButtonName}
         onChange={(e) => setNewButtonName(e.target.value)}
-        className="w-1/2 mx-auto text-center"
       />
-      <div className="mx-auto my-2">
+      <div className="my-2">
         <button
-          onClick={() => setButtonCategory("Expense")}
-          className={`mr-2  px-2 rounded ${
-            buttonCategory === "Expense"
+          onClick={() => {
+            setButtonCategory("Expense");
+            setSelectedCategory("Expense");
+          }}
+          className={`mr-2 ${
+            selectedCategory === "Expense"
               ? "bg-red-500 text-white"
               : "bg-gray-300"
           }`}
@@ -108,9 +137,12 @@ function App() {
           Expense
         </button>
         <button
-          onClick={() => setButtonCategory("Income")}
-          className={`mr-2 px-2 rounded ${
-            buttonCategory === "Income"
+          onClick={() => {
+            setButtonCategory("Income");
+            setSelectedCategory("Income");
+          }}
+          className={`mr-2 ${
+            selectedCategory === "Income"
               ? "bg-green-500 text-white"
               : "bg-gray-300"
           }`}
@@ -118,23 +150,65 @@ function App() {
           Income
         </button>
       </div>
-      <button onClick={handleInitialButtonClick} className="w-1/2 mx-auto border-2 rounded text-amber-400 border-amber-400">Create Button</button>
+      <button onClick={handleInitialButtonClick}>Create Button</button>
 
       {buttons.map((button) => (
-        <div key={button.id} className="mx-auto my-4">
-          <h2 className="mx-auto text-amber-400">
-            {button.category === "Expense"
-              ? "Expense Buttons:"
-              : "Income Buttons:"}
-          </h2>
-          <ClickableButton
-            onClick={() => {}}
-            onDelete={() => handleDeleteButton(button.id, button.label)}
-            label={button.label}
-            className="font-bold text-white"
-          />
+        <div key={button.id} className="my-4">
+          {button.category === selectedCategory && (
+            <>
+              <h2>
+                {selectedCategory === "Expense"
+                  ? "Expense Buttons:"
+                  : "Income Buttons:"}
+              </h2>
+              <ClickableButton
+                onClick={() => setSelectedButton(button)}
+                onDelete={() => handleDeleteButton(button.id, button.label)}
+                label={button.label}
+                className="font-bold text-white"
+              />
+            </>
+          )}
         </div>
       ))}
+
+      {selectedButton && (
+        <div className="my-4">
+          <h2>Sub-Buttons for "{selectedButton.label}":</h2>
+          <div>
+            <button
+              onClick={handleCreateSubGroup}
+              className="px-2 py-1 text-white bg-blue-500 rounded-full"
+            >
+              Create Sub-Group
+            </button>
+            <input
+              type="text"
+              placeholder="Enter sub-button name"
+              value={newButtonName}
+              onChange={(e) => setNewButtonName(e.target.value)}
+            />
+            <button
+              onClick={handleCreateSubButton}
+              className="px-2 py-1 text-white bg-green-500 rounded-full"
+            >
+              Create Sub-Button
+            </button>
+          </div>
+          {subButtons.map((subButton) => (
+            <div key={subButton.id} className="mt-2">
+              <ClickableButton
+                onClick={() => {}}
+                onDelete={() =>
+                  handleDeleteButton(subButton.id, subButton.label)
+                }
+                label={subButton.label}
+                className="font-bold text-white"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <style>
         {`

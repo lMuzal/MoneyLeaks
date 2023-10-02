@@ -1,74 +1,100 @@
 import { useState } from "react";
 
-// eslint-disable-next-line react/prop-types
-function ClickableButton({ onClick, label, className }) {
-  const [highlighted, setHighlighted] = useState(false);
+function DynamicButtonGroupSelector() {
+  const [buttonLabel, setButtonLabel] = useState("");
+  const [buttons, setButtons] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState("expense");
+  const [selectedButton, setSelectedButton] = useState("");
 
-  const handleClick = () => {
-    onClick();
-    setHighlighted(true);
+  const handleButtonLabelChange = (e) => {
+    setButtonLabel(e.target.value);
   };
 
-  return (
-      <button
-        onClick={handleClick}
-        className={`${highlighted ? "highlighted" : ""} ${className}`}
-      >
-        {label}
-      </button>
-  );
-}
-
-function App() {
-  const [buttons, setButtons] = useState([]);
-  const [newButtonName, setNewButtonName] = useState("");
-
-  const handleInitialButtonClick = () => {
-    if (newButtonName.trim() !== "") {
-      const newButton = {
-        id: Date.now(),
-        label: newButtonName,
-      };
+  const handleAddButton = () => {
+    if (buttonLabel.trim() !== "") {
+      const newButton = { label: buttonLabel, group: selectedGroup };
       setButtons([...buttons, newButton]);
-      setNewButtonName(""); // Clear the input field after creating the button
+      setButtonLabel("");
     }
   };
 
-  return (
-    <div className="flex flex-col justify-center text-amber-400 ">
-      <input
-        type="text"
-        placeholder="Enter button name"
-        value={newButtonName}
-        onChange={(e) => setNewButtonName(e.target.value)}
-        className="w-1/2 mx-auto text-center"
-      />
-      <button
-        onClick={handleInitialButtonClick}
-        className="w-1/4 mx-auto mt-3 border-2 rounded text-amber-400 border-amber-400"
-      >
-        Create Button
-      </button>
-      <div className="flex flex-wrap justify-center mt-5">
-        {buttons.map((button) => (
-          <ClickableButton
-            key={button.id}
-            onClick={() => {}}
-            label={button.label}
-            className="px-2 mx-2 mt-2 border-2 rounded text-amber-400 border-amber-400"
-          />
-        ))}
-      </div>
+  const handleGroupChange = (e) => {
+    setSelectedGroup(e.target.value);
+    setSelectedButton("");
+  };
 
-      <style>
-        {`
-          .highlighted {
-            background-color: yellow;
-          }
-        `}
-      </style>
+  const handleSelectedButtonChange = (e) => {
+    setSelectedButton(e.target.value);
+  };
+
+  return (
+    <div className="flex flex-col">
+      <div className="mx-auto">
+        <input
+          type="text"
+          placeholder="Enter button label"
+          value={buttonLabel}
+          onChange={handleButtonLabelChange}
+          className="text-center"
+        />
+
+        <div className="flex flex-row justify-center">
+          <label>
+            <input
+              type="radio"
+              name="group"
+              value="expense"
+              checked={selectedGroup === "expense"}
+              onChange={handleGroupChange}
+              className="appearance-none peer"
+            />
+            <div className="px-2 mx-1 mt-2 font-bold duration-300 ease-in-out border rounded text-amber-400 border-amber-400 py-1/2 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
+              Expense
+            </div>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="group"
+              value="income"
+              checked={selectedGroup === "income"}
+              onChange={handleGroupChange}
+              className="appearance-none peer"
+            />
+            <div className="px-2 mx-1 mt-2 font-bold duration-300 ease-in-out border rounded text-amber-400 border-amber-400 py-1/2 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
+              Income
+            </div>
+          </label>
+        </div>
+
+        <button
+          onClick={handleAddButton}
+          className="w-full px-2 pb-1 mt-5 border-2 rounded text-amber-400 border-amber-400"
+        >
+          Add Button
+        </button>
+      </div>
+      <div className="flex flex-row justify-center">
+        {buttons
+          .filter((button) => button.group === selectedGroup)
+          .map((button, index) => (
+            <label key={index}>
+              <input
+                type="radio"
+                name="userButtons"
+                value={button.label}
+                checked={selectedButton === button.label}
+                onChange={handleSelectedButtonChange}
+                className="appearance-none peer"
+              />
+              <div className="px-2 mx-1 mt-2 font-bold duration-300 ease-in-out border rounded text-amber-400 border-amber-400 py-1/2 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
+                {button.label}
+              </div>
+            </label>
+          ))}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default DynamicButtonGroupSelector;
