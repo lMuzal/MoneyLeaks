@@ -38,14 +38,7 @@ console.log(isClicked)
             className="mx-auto text-3xl text-amber-400"
             onClick={menuClick}
           >
-            Account
-          </Link>
-          <Link
-            to="/MoneyLeaks/accounttest"
-            className="mx-auto text-3xl text-amber-400"
-            onClick={menuClick}
-          >
-            Account Test
+            Account Settings
           </Link>
         </div>
       </div>
