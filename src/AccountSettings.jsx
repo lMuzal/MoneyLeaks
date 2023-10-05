@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function DynamicButtonGroupSelector() {
   const [buttonLabel, setButtonLabel] = useState("");
@@ -11,6 +11,19 @@ function DynamicButtonGroupSelector() {
     useState(null);
   const [selectedSubgroup, setSelectedSubgroup] = useState("");
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
+
+  // Load the saved buttons from local storage when the component mounts
+  useEffect(() => {
+    const savedButtons = localStorage.getItem("buttons");
+    if (savedButtons) {
+      setButtons(JSON.parse(savedButtons));
+    }
+  }, []);
+
+  // Save the buttons to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("buttons", JSON.stringify(buttons));
+  }, [buttons]);
 
   const handleButtonLabelChange = (e) => {
     setButtonLabel(e.target.value);
@@ -196,9 +209,9 @@ function DynamicButtonGroupSelector() {
 
             <button
               onClick={handleAddSubgroup}
-              className="w-1/3 px-2 pb-1 mx-auto mt-2 bg-blue-700 border-2 rounded text-amber-400 border-amber-400"
+              className="w-1/2 px-2 mx-auto mt-2 bg-blue-700 border-2 rounded text-amber-400 border-amber-400"
             >
-              Add Subgroup
+              Add Sub-category
             </button>
 
             <div className="flex flex-row flex-wrap justify-center">
