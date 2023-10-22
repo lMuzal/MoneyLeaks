@@ -5,7 +5,7 @@ export default function DynamicButtonGroupSelector() {
   // eslint-disable-next-line no-unused-vars
   const [buttonLabel, setButtonLabel] = useState("");
   const [mainButtons, setMainButtons] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState("expense");
+  const [selectedGroup, setSelectedGroup] = useState("Expense");
   const [selectedButton, setSelectedButton] = useState("");
   const [subgroupLabel, setSubgroupLabel] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
@@ -135,8 +135,8 @@ export default function DynamicButtonGroupSelector() {
             <input
               type="radio"
               name="group"
-              value="expense"
-              checked={selectedGroup === "expense"}
+              value="Expense"
+              checked={selectedGroup === "Expense"}
               onChange={handleGroupChange}
               className="appearance-none peer"
             />
@@ -148,8 +148,8 @@ export default function DynamicButtonGroupSelector() {
             <input
               type="radio"
               name="group"
-              value="income"
-              checked={selectedGroup === "income"}
+              value="Income"
+              checked={selectedGroup === "Income"}
               onChange={handleGroupChange}
               className="appearance-none peer"
             />

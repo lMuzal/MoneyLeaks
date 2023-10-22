@@ -2,11 +2,12 @@
 import { useState } from "react";
 
 export default function MainSection() {
-  const [selectedGroup, setSelectedGroup] = useState("expense");
+  const [selectedGroup, setSelectedGroup] = useState("Expense");
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
   const [selectedButton, setSelectedButton] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toLocaleDateString());
+  const [formEntries, setFormEntries] = useState([]);
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -25,13 +26,35 @@ export default function MainSection() {
 
   console.log(parsedButtons);
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
+
+    const formData = new FormData(e.target);
+
+    const newEntry = {
+      amount: formData.get("Amount"),
+      date: formData.get("Date"),
+      group: selectedGroup,
+      userButtons: selectedButton,
+      subgroupButtons: formData.get("subgroupButtons"),
+    };
+
+    setFormEntries([...formEntries, newEntry]);
+
+    setAmount("");
+    setDate(new Date().toLocaleDateString());
   };
+
+  console.log(formEntries);
+
+  const columnNames = [
+    "Amount",
+    "Date",
+    "Group",
+    "User Buttons",
+    "Subgroup Buttons",
+  ];
 
   return (
     <div>
@@ -40,28 +63,30 @@ export default function MainSection() {
         method="post"
         onSubmit={handleSubmit}
       >
-          <input
-            required
-            type="number"
-            placeholder="Enter the amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
-          ></input>
-          <input
-            required
-            type="date"
-            value={date}
-            placeholder="Enter the date"
-            onChange={setDate}
-            className="w-1/2 mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
-          ></input>
+        <input
+          required
+          type="number"
+          name="Amount"
+          placeholder="Enter the amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
+        ></input>
+        <input
+          required
+          type="date"
+          name="Date"
+          value={date}
+          placeholder="Enter the date"
+          onChange={(e) => setDate(e.target.value)}
+          className="w-1/2 mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
+        ></input>
         <div className="flex flex-row justify-center pb-3 border-b-2 border-dashed border-amber-400/50">
           <label>
             <input
               type="radio"
               name="group"
-              value="expense"
+              value="Expense"
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -73,7 +98,7 @@ export default function MainSection() {
             <input
               type="radio"
               name="group"
-              value="income"
+              value="Income"
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -130,6 +155,41 @@ export default function MainSection() {
           Submit
         </button>
       </form>
+      <div className="text-center text-amber-400">
+        <h2 className="mt-3 text-bold">Latest Entries</h2>
+        {formEntries.length > 0 && (
+          <table className="mx-auto">
+            <thead className="border border-amber-400">
+              <tr className="border border-amber-400">
+                {columnNames.map((columnName, index) => (
+                  <th className="px-2 border-2 border-amber-400" key={index}>
+                    {columnName}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="border border-amber-400">
+              {formEntries.map((entry, index) => (
+                <tr className="border border-amber-400" key={index}>
+                  <td className="px-1 border border-amber-400">
+                    {entry.amount}
+                  </td>
+                  <td className="px-1 border border-amber-400">{entry.date}</td>
+                  <td className="px-1 border border-amber-400">
+                    {entry.group}
+                  </td>
+                  <td className="px-1 border border-amber-400">
+                    {entry.userButtons}
+                  </td>
+                  <td className="px-1 border border-amber-400">
+                    {entry.subgroupButtons}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }
