@@ -40,7 +40,6 @@ export default function MainSection() {
         method="post"
         onSubmit={handleSubmit}
       >
-        <label>
           <input
             required
             type="number"
@@ -49,8 +48,6 @@ export default function MainSection() {
             onChange={(e) => setAmount(e.target.value)}
             className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
           ></input>
-        </label>
-        <label>
           <input
             required
             type="date"
@@ -59,7 +56,6 @@ export default function MainSection() {
             onChange={setDate}
             className="w-1/2 mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
           ></input>
-        </label>
         <div className="flex flex-row justify-center pb-3 border-b-2 border-dashed border-amber-400/50">
           <label>
             <input
