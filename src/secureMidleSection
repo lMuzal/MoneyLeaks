@@ -77,7 +77,6 @@ export default function MiddleSection() {
 
   const [filteredDataIndex0, setFilteredDataIndex0] = useState();
 
-
   const expenseButtonClick = () => {
     setExpenseClick(!expenseClick);
     if (!expenseClick) {
@@ -371,11 +370,11 @@ export default function MiddleSection() {
     const dataArray = Object.values(data);
     setDataToDisplay([...dataToDisplay, dataArray]);
     for (let index = 0; index < dataToDisplay.length; index++) {
-     setFilteredDataIndex0(dataToDisplay[index][0]);
+      setFilteredDataIndex0(dataToDisplay[index][0]);
     }
     console.log(dataToDisplay);
     sessionStorage.setItem(dataToDisplay);
-    location.reload()
+    location.reload();
   };
 
   return (

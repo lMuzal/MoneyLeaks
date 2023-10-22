@@ -1,29 +1,29 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 
-function DynamicButtonGroupSelector() {
+export default function DynamicButtonGroupSelector() {
+  // eslint-disable-next-line no-unused-vars
   const [buttonLabel, setButtonLabel] = useState("");
-  const [buttons, setButtons] = useState([]);
+  const [mainButtons, setMainButtons] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState("expense");
   const [selectedButton, setSelectedButton] = useState("");
   const [subgroupLabel, setSubgroupLabel] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
   const [showDeleteSubgroupConfirmation, setShowDeleteSubgroupConfirmation] =
     useState(null);
-  const [selectedSubgroup, setSelectedSubgroup] = useState("");
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
 
-  // Load the saved buttons from local storage when the component mounts
   useEffect(() => {
-    const savedButtons = localStorage.getItem("buttons");
+    const savedButtons = JSON.parse(localStorage.getItem("buttons"));
     if (savedButtons) {
-      setButtons(JSON.parse(savedButtons));
+      setMainButtons(savedButtons);
     }
   }, []);
 
-  // Save the buttons to local storage whenever they change
   useEffect(() => {
-    localStorage.setItem("buttons", JSON.stringify(buttons));
-  }, [buttons]);
+    if (mainButtons.length > 0)
+      localStorage.setItem("buttons", JSON.stringify(mainButtons));
+  }, [mainButtons]);
 
   const handleButtonLabelChange = (e) => {
     setButtonLabel(e.target.value);
@@ -36,7 +36,8 @@ function DynamicButtonGroupSelector() {
         group: selectedGroup,
         subgroups: [],
       };
-      setButtons([...buttons, newButton]);
+
+      setMainButtons([...mainButtons, newButton]);
       setButtonLabel("");
     }
   };
@@ -44,14 +45,14 @@ function DynamicButtonGroupSelector() {
   const handleGroupChange = (e) => {
     setSelectedGroup(e.target.value);
     setSelectedButton("");
-    setSelectedSubgroup("");
     setSubgroupLabel("");
   };
 
   const handleSelectedButtonChange = (e, index) => {
     setSelectedButton(e.target.value);
-    setSelectedButtonIndex(index);
-    setSelectedSubgroup("");
+    setSelectedButtonIndex(
+      mainButtons.findIndex((button) => button.label === e.target.value)
+    );
     setSubgroupLabel("");
   };
 
@@ -61,21 +62,39 @@ function DynamicButtonGroupSelector() {
 
   const handleAddSubgroup = () => {
     if (subgroupLabel.trim() !== "" && selectedButton !== "") {
-      const updatedButtons = [...buttons];
-      updatedButtons[selectedButtonIndex].subgroups.push({
-        label: subgroupLabel,
+      setMainButtons((prevMainButtons) => {
+        const updatedButtons = [...prevMainButtons];
+
+        const buttonToUpdate = updatedButtons.find(
+          (button) => button.label === selectedButton
+        );
+
+        if (buttonToUpdate) {
+          const subgroupExists = buttonToUpdate.subgroups.some(
+            (subgroup) => subgroup.label === subgroupLabel
+          );
+
+          if (!subgroupExists) {
+            buttonToUpdate.subgroups.push({
+              label: subgroupLabel,
+              group: selectedGroup,
+            });
+          }
+        }
+
+        return updatedButtons;
       });
-      setButtons(updatedButtons);
+
       setSubgroupLabel("");
     }
   };
 
   const confirmDelete = () => {
     if (showDeleteConfirmation) {
-      const updatedButtons = buttons.filter(
+      const updatedButtons = mainButtons.filter(
         (button) => button.label !== showDeleteConfirmation
       );
-      setButtons(updatedButtons);
+      setMainButtons(updatedButtons);
       setSelectedButton("");
       setShowDeleteConfirmation(null);
     }
@@ -83,15 +102,14 @@ function DynamicButtonGroupSelector() {
 
   const confirmDeleteSubgroup = () => {
     if (showDeleteSubgroupConfirmation) {
-      const updatedButtons = [...buttons];
+      const updatedButtons = [...mainButtons];
       updatedButtons[selectedButtonIndex].subgroups = updatedButtons[
         selectedButtonIndex
       ].subgroups.filter(
         (subgroup) =>
           subgroup.label !== showDeleteSubgroupConfirmation.subgroupLabel
       );
-      setButtons(updatedButtons);
-      setSelectedSubgroup("");
+      setMainButtons(updatedButtons);
       setShowDeleteSubgroupConfirmation(null);
     }
   };
@@ -149,7 +167,7 @@ function DynamicButtonGroupSelector() {
         </button>
       </div>
       <div className="flex flex-row flex-wrap justify-center">
-        {buttons
+        {mainButtons
           .filter((button) => button.group === selectedGroup)
           .map((button, index) => (
             <div key={index}>
@@ -177,8 +195,8 @@ function DynamicButtonGroupSelector() {
                 <div className="absolute z-50 w-3/4 p-2 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black rounded top-1/2 left-1/2">
                   <p>
                     Are you sure you want to delete this category? <br></br>
-                    *Deleting this category will result in deleting any of its
-                    created sub-categories
+                    *Deleting this category will result in deleting all of its
+                    sub-categories
                   </p>
                   <button
                     onClick={confirmDelete}
@@ -206,25 +224,22 @@ function DynamicButtonGroupSelector() {
               onChange={handleSubgroupLabelChange}
               className="px-3 mx-auto mt-2 text-center"
             />
-
             <button
               onClick={handleAddSubgroup}
               className="w-1/2 px-2 mx-auto mt-2 bg-blue-700 border-2 rounded text-amber-400 border-amber-400"
             >
               Add Sub-category
             </button>
-
             <div className="flex flex-row flex-wrap justify-center">
-              {buttons[selectedButtonIndex].subgroups.map(
-                (subgroup, sIndex) => (
+              {mainButtons[selectedButtonIndex].subgroups
+                .filter((subgroup) => subgroup.group === selectedGroup)
+                .map((subgroup, sIndex) => (
                   <div key={sIndex}>
                     <label className="flex px-2 mt-3">
                       <input
                         type="radio"
                         name="subgroupButtons"
                         value={subgroup.label}
-                        checked={selectedSubgroup === subgroup.label}
-                        onChange={() => setSelectedSubgroup(subgroup.label)}
                         className="appearance-none peer"
                       />
                       <div className="px-2 mt-2 font-bold duration-300 ease-in-out border rounded h-7 text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
@@ -233,7 +248,7 @@ function DynamicButtonGroupSelector() {
                       <button
                         onClick={() =>
                           setShowDeleteSubgroupConfirmation({
-                            buttonLabel: buttons[selectedButtonIndex].label,
+                            buttonLabel: mainButtons[selectedButtonIndex].label,
                             subgroupLabel: subgroup.label,
                           })
                         }
@@ -245,13 +260,14 @@ function DynamicButtonGroupSelector() {
 
                     {showDeleteSubgroupConfirmation &&
                       showDeleteSubgroupConfirmation.buttonLabel ===
-                        buttons[selectedButtonIndex].label &&
+                        mainButtons[selectedButtonIndex].label &&
                       showDeleteSubgroupConfirmation.subgroupLabel ===
                         subgroup.label && (
                         <div className="absolute z-50 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white top-1/2 left-1/2">
                           <p>
                             Are you sure you want to delete this{" "}
-                            {buttons[selectedButtonIndex].label} sub-category?
+                            {mainButtons[selectedButtonIndex].label}{" "}
+                            sub-category?
                           </p>
                           <button
                             onClick={confirmDeleteSubgroup}
@@ -268,8 +284,7 @@ function DynamicButtonGroupSelector() {
                         </div>
                       )}
                   </div>
-                )
-              )}
+                ))}
             </div>
           </div>
         )}
@@ -277,5 +292,3 @@ function DynamicButtonGroupSelector() {
     </div>
   );
 }
-
-export default DynamicButtonGroupSelector;

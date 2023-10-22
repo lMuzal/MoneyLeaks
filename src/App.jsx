@@ -1,22 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./Header";
-import MiddleSection from "./MiddleSection";
+import MainSection from "./MainSection";
 import LoginPage from "./Loginpage";
-import AccountSettings from "./AccountSettings"
-
+import DynamicButtonGroupSelector from "./DynamicButtonGroupSelector";
 
 export default function App() {
+
   return (
     <>
-      <Router>
-        <Header></Header>
-        <Routes>
-          <Route path="/MoneyLeaks" element={<MiddleSection />} />
-          <Route index element={<MiddleSection />} />
-          <Route path="/MoneyLeaks/login" element={<LoginPage />} />
-          <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
-        </Routes>
-      </Router>
+        <Router>
+          <Header></Header>
+          <Routes>
+            <Route path="/MoneyLeaks" element={<MainSection />} />
+            <Route path="/MoneyLeaks/login" element={<LoginPage />} />
+            <Route
+              path="/MoneyLeaks/account"
+              element={<DynamicButtonGroupSelector />}
+            />
+          </Routes>
+        </Router>
     </>
   );
 }
