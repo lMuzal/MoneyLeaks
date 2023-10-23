@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function MainSection() {
   const [selectedGroup, setSelectedGroup] = useState("Expense");
@@ -26,6 +26,11 @@ export default function MainSection() {
 
   console.log(parsedButtons);
 
+  useEffect(() => {
+    // Load saved entries from local storage on component mount
+    const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
+    setFormEntries(savedEntries);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,6 +46,11 @@ export default function MainSection() {
     };
 
     setFormEntries([...formEntries, newEntry]);
+
+    localStorage.setItem(
+      "formEntries",
+      JSON.stringify([...formEntries, newEntry])
+    );
 
     setAmount("");
     setDate(new Date().toLocaleDateString());
