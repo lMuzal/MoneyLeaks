@@ -4,7 +4,16 @@ import { useState, useEffect } from "react";
 export default function DynamicButtonGroupSelector() {
   // eslint-disable-next-line no-unused-vars
   const [buttonLabel, setButtonLabel] = useState("");
-  const [mainButtons, setMainButtons] = useState([]);
+  const [mainButtons, setMainButtons] = useState([
+  {
+    "label": "Other",
+    "group": "Expense",
+  },
+  {
+    "label": "Other",
+    "group": "Income",
+  }
+]);
   const [selectedGroup, setSelectedGroup] = useState("Expense");
   const [selectedButton, setSelectedButton] = useState("");
   const [subgroupLabel, setSubgroupLabel] = useState("");
@@ -12,6 +21,7 @@ export default function DynamicButtonGroupSelector() {
   const [showDeleteSubgroupConfirmation, setShowDeleteSubgroupConfirmation] =
     useState(null);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
+  const [startingBalance, setStartingBalance] = useState(null);
 
   useEffect(() => {
     const savedButtons = JSON.parse(localStorage.getItem("buttons"));
@@ -24,6 +34,20 @@ export default function DynamicButtonGroupSelector() {
     if (mainButtons.length > 0)
       localStorage.setItem("buttons", JSON.stringify(mainButtons));
   }, [mainButtons]);
+
+  useEffect(() => {
+    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
+    if (initialBalance) {
+      setStartingBalance(initialBalance);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (startingBalance)
+      localStorage.setItem("initialBalance", JSON.stringify(startingBalance));
+  }, [startingBalance]);
+
+  
 
   const handleButtonLabelChange = (e) => {
     setButtonLabel(e.target.value);
@@ -119,8 +143,23 @@ export default function DynamicButtonGroupSelector() {
     setShowDeleteSubgroupConfirmation(null);
   };
 
+  const handleStartingBalanceChange = (e) => {
+    setStartingBalance(e.target.value);
+  }
+
+  console.log(startingBalance)
+
   return (
     <div className="flex flex-col">
+      <div className="pb-4 mx-auto">
+        <input
+          type="number"
+          placeholder="Enter starting balance"
+          value={startingBalance}
+          onChange={handleStartingBalanceChange}
+          className="text-center"
+        />
+      </div>
       <div className="mx-auto">
         <input
           type="text"
@@ -193,20 +232,20 @@ export default function DynamicButtonGroupSelector() {
 
               {showDeleteConfirmation === button.label && (
                 <div className="absolute z-50 w-3/4 p-2 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black rounded top-1/2 left-1/2">
-                  <p>
+                  <p className="pb-4">
                     Are you sure you want to delete this category? <br></br>
                     *Deleting this category will result in deleting all of its
                     sub-categories
                   </p>
                   <button
                     onClick={confirmDelete}
-                    className="px-2 py-1 mx-2 text-white bg-red-700 rounded"
+                    className="px-4 py-1 mx-2 text-white bg-red-700 rounded"
                   >
                     Yes
                   </button>
                   <button
                     onClick={cancelDelete}
-                    className="px-2 py-1 mx-2 text-white bg-green-700 rounded"
+                    className="px-4 py-1 mx-2 text-white bg-green-700 rounded"
                   >
                     No
                   </button>
@@ -263,21 +302,21 @@ export default function DynamicButtonGroupSelector() {
                         mainButtons[selectedButtonIndex].label &&
                       showDeleteSubgroupConfirmation.subgroupLabel ===
                         subgroup.label && (
-                        <div className="absolute z-50 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white top-1/2 left-1/2">
-                          <p>
+                        <div className="absolute z-50 w-3/4 p-2 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black rounded top-1/2 left-1/2">
+                          <p className="pb-4">
                             Are you sure you want to delete this{" "}
                             {mainButtons[selectedButtonIndex].label}{" "}
                             sub-category?
                           </p>
                           <button
                             onClick={confirmDeleteSubgroup}
-                            className="px-2 py-1 mx-2 text-white bg-red-700 rounded"
+                            className="px-4 py-1 mx-2 text-white bg-red-700 rounded"
                           >
                             Yes
                           </button>
                           <button
                             onClick={cancelDelete}
-                            className="px-2 py-1 mx-2 text-white bg-green-700 rounded"
+                            className="px-4 py-1 mx-2 text-white bg-green-700 rounded"
                           >
                             No
                           </button>

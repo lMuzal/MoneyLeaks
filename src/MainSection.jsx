@@ -8,6 +8,7 @@ export default function MainSection() {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [formEntries, setFormEntries] = useState([]);
+  const [currentBalance, setCurrentBalance] = useState(null);
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -27,9 +28,14 @@ export default function MainSection() {
   console.log(parsedButtons);
 
   useEffect(() => {
-    // Load saved entries from local storage on component mount
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
     setFormEntries(savedEntries);
+  }, []);
+
+  useEffect(() => {
+    const remainingBalance =
+      JSON.parse(localStorage.getItem("currentBalance")) || [];
+    setCurrentBalance(remainingBalance);
   }, []);
 
   const handleSubmit = (e) => {
@@ -68,6 +74,7 @@ export default function MainSection() {
 
   return (
     <div>
+      <div className="flex flex-row justify-center pb-4 text-xl text-amber-400">{currentBalance}</div>
       <form
         className="flex flex-col justify-center"
         method="post"
@@ -95,8 +102,9 @@ export default function MainSection() {
           <label>
             <input
               type="radio"
-              name="group"
+              name="mainGroup"
               value="Expense"
+              checked={selectedGroup === "Expense"}
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -107,8 +115,9 @@ export default function MainSection() {
           <label>
             <input
               type="radio"
-              name="group"
+              name="mainGroup"
               value="Income"
+              checked={selectedGroup === "Income"}
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -168,7 +177,7 @@ export default function MainSection() {
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Latest Entries</h2>
         {formEntries.length > 0 && (
-          <table className="mx-auto">
+          <table className="mx-auto text-xs">
             <thead className="border border-amber-400">
               <tr className="border border-amber-400">
                 {columnNames.map((columnName, index) => (
