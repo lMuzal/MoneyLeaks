@@ -21,10 +21,10 @@ console.log(isClicked)
         <div className="flex flex-col m-auto">
           <Link
             to="/MoneyLeaks/login"
-            className="mx-auto text-3xl text-amber-400"
+            className="pb-16 mx-auto text-3xl text-amber-400"
             onClick={menuClick}
           >
-            Login
+            Log In
           </Link>
           <Link
             to="/MoneyLeaks"
@@ -46,6 +46,13 @@ console.log(isClicked)
             onClick={menuClick}
           >
             Account Settings
+          </Link>
+          <Link
+            to="/MoneyLeaks/login"
+            className="pt-16 mx-auto text-3xl text-amber-400"
+            onClick={menuClick}
+          >
+            Log Out
           </Link>
         </div>
       </div>

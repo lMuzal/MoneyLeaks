@@ -4,16 +4,7 @@ import { useState, useEffect } from "react";
 export default function DynamicButtonGroupSelector() {
   // eslint-disable-next-line no-unused-vars
   const [buttonLabel, setButtonLabel] = useState("");
-  const [mainButtons, setMainButtons] = useState([
-  {
-    "label": "Other",
-    "group": "Expense",
-  },
-  {
-    "label": "Other",
-    "group": "Income",
-  }
-]);
+  const [mainButtons, setMainButtons] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState("Expense");
   const [selectedButton, setSelectedButton] = useState("");
   const [subgroupLabel, setSubgroupLabel] = useState("");
@@ -21,7 +12,7 @@ export default function DynamicButtonGroupSelector() {
   const [showDeleteSubgroupConfirmation, setShowDeleteSubgroupConfirmation] =
     useState(null);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
-  const [startingBalance, setStartingBalance] = useState(null);
+  const [initialBalance, setInitialBalance] = useState(null);
 
   useEffect(() => {
     const savedButtons = JSON.parse(localStorage.getItem("buttons"));
@@ -38,14 +29,14 @@ export default function DynamicButtonGroupSelector() {
   useEffect(() => {
     const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
     if (initialBalance) {
-      setStartingBalance(initialBalance);
+      setInitialBalance(initialBalance);
     }
   }, []);
 
   useEffect(() => {
-    if (startingBalance)
-      localStorage.setItem("initialBalance", JSON.stringify(startingBalance));
-  }, [startingBalance]);
+    if (initialBalance)
+      localStorage.setItem("initialBalance", JSON.stringify(initialBalance));
+  }, [initialBalance]);
 
   
 
@@ -144,10 +135,10 @@ export default function DynamicButtonGroupSelector() {
   };
 
   const handleStartingBalanceChange = (e) => {
-    setStartingBalance(e.target.value);
+    setInitialBalance(e.target.value);
   }
 
-  console.log(startingBalance)
+  console.log(initialBalance)
 
   return (
     <div className="flex flex-col">
@@ -155,7 +146,7 @@ export default function DynamicButtonGroupSelector() {
         <input
           type="number"
           placeholder="Enter starting balance"
-          value={startingBalance}
+          value={initialBalance}
           onChange={handleStartingBalanceChange}
           className="text-center"
         />

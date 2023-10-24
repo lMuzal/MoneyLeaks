@@ -8,7 +8,7 @@ export default function MainSection() {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [formEntries, setFormEntries] = useState([]);
-  const [currentBalance, setCurrentBalance] = useState(null);
+  const [currentBalance, setCurrentBalance] = useState(0);
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -33,10 +33,16 @@ export default function MainSection() {
   }, []);
 
   useEffect(() => {
-    const remainingBalance =
-      JSON.parse(localStorage.getItem("currentBalance")) || [];
-    setCurrentBalance(remainingBalance);
+    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
+    if (initialBalance) {
+      setCurrentBalance(initialBalance);
+    }
   }, []);
+
+  useEffect(() => {
+    if (currentBalance)
+      localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
+  }, [currentBalance]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,13 +74,33 @@ export default function MainSection() {
     "Amount",
     "Date",
     "Group",
-    "User Buttons",
-    "Subgroup Buttons",
+    "Category",
+    "Subcategory",
   ];
+
+  const totalIncome = formEntries
+    .filter((entry) => entry.group === "Income")
+    .reduce((total, entry) => total + parseFloat(entry.amount), 0);
+
+  const totalExpense = formEntries
+    .filter((entry) => entry.group === "Expense")
+    .reduce((total, entry) => total + parseFloat(entry.amount), 0);
+
+  const actualBalance = parseFloat(currentBalance) + totalIncome - totalExpense;
+
+  useEffect(() => {
+    if (actualBalance)
+      localStorage.setItem(
+        "actualBalance",
+        JSON.stringify(actualBalance.toFixed(2))
+      );
+  }, [actualBalance]);
 
   return (
     <div>
-      <div className="flex flex-row justify-center pb-4 text-xl text-amber-400">{currentBalance}</div>
+      <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
+        {actualBalance.toFixed(2)}
+      </div>
       <form
         className="flex flex-col justify-center"
         method="post"
