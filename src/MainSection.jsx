@@ -8,7 +8,54 @@ export default function MainSection() {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [formEntries, setFormEntries] = useState([]);
+  const [initialBalance, setInitialBalance] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
+  const [entryToDelete, setEntryToDelete] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
+
+  useEffect(() => {
+    const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
+    setFormEntries(savedEntries);
+  }, []);
+
+  useEffect(() => {
+    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
+    setInitialBalance(initialBalance);
+  }, []);
+  
+  useEffect(() => {
+    if (initialBalance) {
+      setCurrentBalance(initialBalance);
+    }
+  }, [initialBalance]);
+
+  useEffect(() => {
+    setCurrentBalance(initialBalance);
+  }, [initialBalance]);
+
+  useEffect(() => {
+    const calculatedBalance = JSON.parse(
+      localStorage.getItem("currentBalance")
+    );
+    if (calculatedBalance !== null) {
+      setCurrentBalance(
+        calculatedBalance
+      );
+    }
+  }, [initialBalance]);
+  
+  useEffect(() => {
+    if (formEntries.length == 0) {
+      setCurrentBalance(initialBalance);
+    }
+  }, [formEntries, initialBalance]);
+
+  useEffect(() => {
+    if (currentBalance)
+      localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
+  }, [currentBalance]);
+
+  
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -27,23 +74,6 @@ export default function MainSection() {
 
   console.log(parsedButtons);
 
-  useEffect(() => {
-    const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
-    setFormEntries(savedEntries);
-  }, []);
-
-  useEffect(() => {
-    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
-    if (initialBalance) {
-      setCurrentBalance(initialBalance);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (currentBalance)
-      localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
-  }, [currentBalance]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -58,6 +88,12 @@ export default function MainSection() {
     };
 
     setFormEntries([...formEntries, newEntry]);
+
+    const entryAmount = parseFloat(newEntry.amount);
+    const balanceChange =
+      selectedGroup === "Income" ? entryAmount : -entryAmount;
+
+    setCurrentBalance(parseFloat(currentBalance) + parseFloat(balanceChange));
 
     localStorage.setItem(
       "formEntries",
@@ -76,30 +112,46 @@ export default function MainSection() {
     "Group",
     "Category",
     "Subcategory",
+    "",
   ];
 
-  const totalIncome = formEntries
-    .filter((entry) => entry.group === "Income")
-    .reduce((total, entry) => total + parseFloat(entry.amount), 0);
+  const handleDeleteEntry = (index) => {
+    setEntryToDelete(index);
+    setShowDeleteConfirmation(index);
+  };
 
-  const totalExpense = formEntries
-    .filter((entry) => entry.group === "Expense")
-    .reduce((total, entry) => total + parseFloat(entry.amount), 0);
+  const confirmDeleteEntry = () => {
+    if (entryToDelete !== null) {
+      const updatedEntries = [...formEntries];
+      const deletedEntry = updatedEntries.splice(entryToDelete, 1)[0];
+      setFormEntries(updatedEntries);
 
-  const actualBalance = parseFloat(currentBalance) + totalIncome - totalExpense;
+      localStorage.setItem("formEntries", JSON.stringify(updatedEntries));
 
-  useEffect(() => {
-    if (actualBalance)
-      localStorage.setItem(
-        "actualBalance",
-        JSON.stringify(actualBalance.toFixed(2))
-      );
-  }, [actualBalance]);
+      if (deletedEntry.group === "Income") {
+        setCurrentBalance(
+          parseFloat(currentBalance) - parseFloat(deletedEntry.amount)
+        );
+      } else if (deletedEntry.group === "Expense") {
+        setCurrentBalance(
+          parseFloat(currentBalance) + parseFloat(deletedEntry.amount)
+        );
+      }
+
+      setEntryToDelete(null);
+      setShowDeleteConfirmation(null);
+    }
+  };
+
+  const cancelDeleteEntry = () => {
+    setEntryToDelete(null);
+    setShowDeleteConfirmation(null);
+  };
 
   return (
-    <div>
+    <>
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
-        {actualBalance.toFixed(2)}
+        {currentBalance}
       </div>
       <form
         className="flex flex-col justify-center"
@@ -229,12 +281,39 @@ export default function MainSection() {
                   <td className="px-1 border border-amber-400">
                     {entry.subgroupButtons}
                   </td>
+                  <td className="px-1 bg-red-700 border border-amber-400">
+                    <button
+                      onClick={() => handleDeleteEntry(index)}
+                      className="font-bold text-white"
+                    >
+                      X
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
-    </div>
+      {showDeleteConfirmation !== null && (
+        <div className="modal">
+          <div className="absolute z-50 w-3/4 p-2 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black rounded modal-content top-1/2 left-1/2">
+            <p className="pb-4">Are you sure you want to delete this entry?</p>
+            <button
+              onClick={confirmDeleteEntry}
+              className="px-4 py-1 mx-2 text-white bg-red-700 rounded btn-delete"
+            >
+              Yes
+            </button>
+            <button
+              onClick={cancelDeleteEntry}
+              className="px-4 py-1 mx-2 text-white bg-green-700 rounded btn-cancel"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
