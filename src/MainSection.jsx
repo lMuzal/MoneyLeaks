@@ -12,6 +12,7 @@ export default function MainSection() {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
+  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
@@ -55,7 +56,19 @@ export default function MainSection() {
       localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
   }, [currentBalance]);
 
-  
+   useEffect(() => {
+     const totalExpense = formEntries
+       .filter((entry) => entry.group === "Expense")
+       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+     const totalIncome = formEntries
+       .filter((entry) => entry.group === "Income")
+       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+
+     localStorage.setItem("totalExpense", JSON.stringify(totalExpense));
+     localStorage.setItem("totalIncome", JSON.stringify(totalIncome));
+   }, [formEntries]);
+
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
