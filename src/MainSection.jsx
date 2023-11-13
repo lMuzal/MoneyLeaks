@@ -327,6 +327,7 @@ export default function MainSection() {
           </div>
         </div>
       )}
+      <div className="text-white">{JSON.stringify(formEntries)}</div>
     </>
   );
 }

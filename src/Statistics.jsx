@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import SunburstChart from "./SunburstChart";
 
 export default function Statistics() {
   const [currentBalance, setCurrentBalance] = useState(null);
   const [formEntries, setFormEntries] = useState([]);
-//   const [currentMonth] = useState(new Date().getMonth());
+  //   const [currentMonth] = useState(new Date().getMonth());
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterSubcategory, setFilterSubcategory] = useState("all");
@@ -80,6 +81,9 @@ export default function Statistics() {
       <div className="flex flex-col justify-center text-bold text-amber-400">
         <p className="mx-auto">Current Balance</p>
         <p className="mx-auto text-xl font-bold">{currentBalance}</p>
+      </div>
+      <div className="flex justify-center w-full pt-8">
+        <SunburstChart />
       </div>
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Entries</h2>
