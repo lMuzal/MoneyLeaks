@@ -61,6 +61,26 @@ const convertToSunburstData = (data) => {
   return sunburstData;
 };
 
-const sunburstData = convertToSunburstData(inputData);
+let sunburstData;
+
+// Check if localStorage is empty or formEntries is empty
+if (!inputData || inputData.length === 0) {
+  // Set an initial default value for formEntries
+  const initialEntry = {
+    amount: "100", // Set your default amount
+    date: new Date().toLocaleDateString(),
+    group: "Expense", // Set your default group
+    userButtons: "DefaultButton", // Set your default button
+    subgroupButtons: "DefaultSubgroup", // Set your default subgroup
+  };
+
+  sunburstData = convertToSunburstData([initialEntry]);
+
+  // Update localStorage with the initial value
+  localStorage.setItem("formEntries", JSON.stringify([initialEntry]));
+} else {
+  // Use the existing logic to convert inputData to sunburstData
+  sunburstData = convertToSunburstData(inputData);
+}
 
 export default sunburstData;

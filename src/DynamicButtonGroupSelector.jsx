@@ -15,10 +15,26 @@ export default function DynamicButtonGroupSelector() {
   const [initialBalance, setInitialBalance] = useState(null);
 
   useEffect(() => {
-    const savedButtons = JSON.parse(localStorage.getItem("buttons"));
-    if (savedButtons) {
-      setMainButtons(savedButtons);
+    let savedButtons = JSON.parse(localStorage.getItem("buttons"));
+
+    // Check if savedButtons is null or an empty array
+    if (!savedButtons || savedButtons.length === 0) {
+      // Set some initial buttons
+      savedButtons = [
+        { label: "DefaultButton1", group: "Expense", subgroups: [] },
+        { label: "DefaultButton2", group: "Income", subgroups: [] },
+        // Add more default buttons as needed
+      ];
+
+      // Log to check that initial buttons are set
+      console.log("Setting Initial Buttons:", savedButtons);
+
+      // Update localStorage with the initial buttons
+      localStorage.setItem("buttons", JSON.stringify(savedButtons));
     }
+
+    // Set mainButtons state with the retrieved or initial value
+    setMainButtons(savedButtons);
   }, []);
 
   useEffect(() => {

@@ -13,12 +13,21 @@ export default function MainSection() {
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
   const [filter, setFilter] = useState("All");
+  const [parsedButtons, setParsedButtons] = useState([]);
+
+  // ... (previous code)
+
+  // ... (previous code)
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
 
-    // Check if formEntries is empty
-    if (savedEntries.length === 0) {
+    // Log to check the value of savedEntries
+    console.log("Saved Entries:", savedEntries);
+
+    // Check if formEntries is null or undefined
+    if (!savedEntries || savedEntries.length === 0) {
+      // Set an initial default value for formEntries
       const initialEntry = {
         amount: "100", // Set your default amount
         date: new Date().toLocaleDateString(),
@@ -27,15 +36,39 @@ export default function MainSection() {
         subgroupButtons: "DefaultSubgroup", // Set your default subgroup
       };
 
-      // Set the initial value for formEntries
-      savedEntries.push(initialEntry);
+      // Log to check that the initial entry is set
+      console.log("Setting Initial Entry:", initialEntry);
 
       // Update localStorage with the initial value
-      localStorage.setItem("formEntries", JSON.stringify(savedEntries));
+      localStorage.setItem("formEntries", JSON.stringify([initialEntry]));
+
+      // Set formEntries state with the initial value
+      setFormEntries([initialEntry]);
+    } else {
+      // Set formEntries state with the retrieved value
+      setFormEntries(savedEntries);
     }
 
-    // Set formEntries state
-    setFormEntries(savedEntries);
+    const savedButtons = JSON.parse(localStorage.getItem("buttons"));
+
+    // Check if parsedButtons is null or undefined
+    if (!savedButtons || savedButtons.length === 0) {
+      // Set initial default buttons if not present in localStorage
+      const initialButtons = [
+        { label: "DefaultButton1", group: "Expense", subgroups: [] },
+        { label: "DefaultButton2", group: "Income", subgroups: [] },
+        // Add more initial buttons as needed
+      ];
+
+      // Update localStorage with the initial value
+      localStorage.setItem("buttons", JSON.stringify(initialButtons));
+
+      // Set parsedButtons state with the initial value
+      setParsedButtons(initialButtons);
+    } else {
+      // Set parsedButtons state with the retrieved value
+      setParsedButtons(savedButtons);
+    }
   }, []);
 
   useEffect(() => {
@@ -47,7 +80,7 @@ export default function MainSection() {
     const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
     setInitialBalance(initialBalance);
   }, []);
-  
+
   useEffect(() => {
     if (initialBalance) {
       setCurrentBalance(initialBalance);
@@ -63,12 +96,10 @@ export default function MainSection() {
       localStorage.getItem("currentBalance")
     );
     if (calculatedBalance !== null) {
-      setCurrentBalance(
-        calculatedBalance
-      );
+      setCurrentBalance(calculatedBalance);
     }
   }, [initialBalance]);
-  
+
   useEffect(() => {
     if (formEntries.length == 0) {
       setCurrentBalance(initialBalance);
@@ -80,19 +111,18 @@ export default function MainSection() {
       localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
   }, [currentBalance]);
 
-   useEffect(() => {
-     const totalExpense = formEntries
-       .filter((entry) => entry.group === "Expense")
-       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  useEffect(() => {
+    const totalExpense = formEntries
+      .filter((entry) => entry.group === "Expense")
+      .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
 
-     const totalIncome = formEntries
-       .filter((entry) => entry.group === "Income")
-       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+    const totalIncome = formEntries
+      .filter((entry) => entry.group === "Income")
+      .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
 
-     localStorage.setItem("totalExpense", JSON.stringify(totalExpense));
-     localStorage.setItem("totalIncome", JSON.stringify(totalIncome));
-   }, [formEntries]);
-
+    localStorage.setItem("totalExpense", JSON.stringify(totalExpense));
+    localStorage.setItem("totalIncome", JSON.stringify(totalIncome));
+  }, [formEntries]);
 
   const handleMainButtonChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -106,8 +136,6 @@ export default function MainSection() {
     );
   };
 
-  const savedButtons = localStorage.getItem("buttons");
-  const parsedButtons = JSON.parse(savedButtons);
 
   console.log(parsedButtons);
 
@@ -264,6 +292,8 @@ export default function MainSection() {
         </div>
         <div className="flex flex-row flex-wrap justify-center">
           {selectedButtonIndex !== null &&
+            parsedButtons[selectedButtonIndex] &&
+            parsedButtons[selectedButtonIndex].subgroups &&
             parsedButtons[selectedButtonIndex].subgroups
               .filter((subgroup) => subgroup.group === selectedGroup)
               .map((subgroup, sIndex) => (
