@@ -16,6 +16,30 @@ export default function MainSection() {
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
+
+    // Check if formEntries is empty
+    if (savedEntries.length === 0) {
+      const initialEntry = {
+        amount: "100", // Set your default amount
+        date: new Date().toLocaleDateString(),
+        group: "Expense", // Set your default group
+        userButtons: "DefaultButton", // Set your default button
+        subgroupButtons: "DefaultSubgroup", // Set your default subgroup
+      };
+
+      // Set the initial value for formEntries
+      savedEntries.push(initialEntry);
+
+      // Update localStorage with the initial value
+      localStorage.setItem("formEntries", JSON.stringify(savedEntries));
+    }
+
+    // Set formEntries state
+    setFormEntries(savedEntries);
+  }, []);
+
+  useEffect(() => {
+    const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
     setFormEntries(savedEntries);
   }, []);
 
@@ -327,7 +351,6 @@ export default function MainSection() {
           </div>
         </div>
       )}
-      <div className="text-white">{JSON.stringify(formEntries)}</div>
     </>
   );
 }
