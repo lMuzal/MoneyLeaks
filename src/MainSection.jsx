@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
+import DatePicker from "./DatePicker";
 
 export default function MainSection() {
   const [selectedGroup, setSelectedGroup] = useState("Expense");
@@ -12,61 +13,43 @@ export default function MainSection() {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
-  const [filter, setFilter] = useState("All");
   const [parsedButtons, setParsedButtons] = useState([]);
-
-  // ... (previous code)
-
-  // ... (previous code)
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
 
-    // Log to check the value of savedEntries
     console.log("Saved Entries:", savedEntries);
 
-    // Check if formEntries is null or undefined
     if (!savedEntries || savedEntries.length === 0) {
-      // Set an initial default value for formEntries
       const initialEntry = {
-        amount: "100", // Set your default amount
+        amount: "100",
         date: new Date().toLocaleDateString(),
-        group: "Expense", // Set your default group
-        userButtons: "DefaultButton", // Set your default button
-        subgroupButtons: "DefaultSubgroup", // Set your default subgroup
+        group: "Expense",
+        userButtons: "Example",
+        subgroupButtons: "Example 2",
       };
 
-      // Log to check that the initial entry is set
       console.log("Setting Initial Entry:", initialEntry);
 
-      // Update localStorage with the initial value
       localStorage.setItem("formEntries", JSON.stringify([initialEntry]));
 
-      // Set formEntries state with the initial value
       setFormEntries([initialEntry]);
     } else {
-      // Set formEntries state with the retrieved value
       setFormEntries(savedEntries);
     }
 
     const savedButtons = JSON.parse(localStorage.getItem("buttons"));
 
-    // Check if parsedButtons is null or undefined
     if (!savedButtons || savedButtons.length === 0) {
-      // Set initial default buttons if not present in localStorage
       const initialButtons = [
         { label: "DefaultButton1", group: "Expense", subgroups: [] },
         { label: "DefaultButton2", group: "Income", subgroups: [] },
-        // Add more initial buttons as needed
       ];
 
-      // Update localStorage with the initial value
       localStorage.setItem("buttons", JSON.stringify(initialButtons));
 
-      // Set parsedButtons state with the initial value
       setParsedButtons(initialButtons);
     } else {
-      // Set parsedButtons state with the retrieved value
       setParsedButtons(savedButtons);
     }
   }, []);
@@ -81,15 +64,15 @@ export default function MainSection() {
     setInitialBalance(initialBalance);
   }, []);
 
-  useEffect(() => {
-    if (initialBalance) {
-      setCurrentBalance(initialBalance);
-    }
-  }, [initialBalance]);
+   useEffect(() => {
+     if (initialBalance) {
+       setCurrentBalance(initialBalance);
+     }
+   }, [initialBalance]);
 
-  useEffect(() => {
-    setCurrentBalance(initialBalance);
-  }, [initialBalance]);
+   useEffect(() => {
+     setCurrentBalance(initialBalance);
+   }, [initialBalance]);
 
   useEffect(() => {
     const calculatedBalance = JSON.parse(
@@ -135,7 +118,6 @@ export default function MainSection() {
       parsedButtons.findIndex((button) => button.label === e.target.value)
     );
   };
-
 
   console.log(parsedButtons);
 
@@ -215,6 +197,8 @@ export default function MainSection() {
 
   return (
     <>
+      <DatePicker />
+
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
         {currentBalance}
       </div>

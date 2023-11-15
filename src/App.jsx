@@ -2,11 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./Header";
 import MainSection from "./MainSection";
 import LoginPage from "./Loginpage";
-import DynamicButtonGroupSelector from "./DynamicButtonGroupSelector";
+import AccountSettings from "./AccountSettings";
 import Statistics from "./Statistics";
 
 export default function App() {
-
   return (
     <>
       <Router>
@@ -16,10 +15,7 @@ export default function App() {
           <Route path="/MoneyLeaks" element={<MainSection />} />
           <Route path="/MoneyLeaks/statistics" element={<Statistics />} />
 
-          <Route
-            path="/MoneyLeaks/account"
-            element={<DynamicButtonGroupSelector />}
-          />
+          <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
         </Routes>
       </Router>
     </>
