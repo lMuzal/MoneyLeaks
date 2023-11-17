@@ -3,37 +3,37 @@ import React, { useState, useEffect } from "react";
 
 export default function AccountSettings() {
   const [buttonLabel, setButtonLabel] = useState("");
-  const [mainButtons, setMainButtons] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState("Expense");
-  const [selectedButton, setSelectedButton] = useState("");
-  const [subgroupLabel, setSubgroupLabel] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [subcategoryLabel, setSubcategoryLabel] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
   const [showDeleteSubgroupConfirmation, setShowDeleteSubgroupConfirmation] =
     useState(null);
-  const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [initialBalance, setInitialBalance] = useState(null);
 
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    let savedButtons = JSON.parse(localStorage.getItem("buttons"));
+    let savedCategories = JSON.parse(localStorage.getItem("groups"));
 
-    if (!savedButtons || savedButtons.length === 0) {
-      savedButtons = [
-        { label: "DefaultButton1", group: "Expense", subgroups: [] },
-        { label: "DefaultButton2", group: "Income", subgroups: [] },
+    if (!savedCategories || savedCategories.length === 0) {
+      savedCategories = [
+        { label: "Default Expense Category", group: "Expense", subgroups: [] },
+        { label: "Default Income Category", group: "Income", subgroups: [] },
       ];
 
-      localStorage.setItem("buttons", JSON.stringify(savedButtons));
+      localStorage.setItem("groups", JSON.stringify(savedCategories));
     }
 
-    setMainButtons(savedButtons);
+    setMainCategories(savedCategories);
   }, []);
 
   useEffect(() => {
-    if (mainButtons.length > 0)
-      localStorage.setItem("buttons", JSON.stringify(mainButtons));
-  }, [mainButtons]);
+    if (mainCategories.length > 0)
+      localStorage.setItem("groups", JSON.stringify(mainCategories));
+  }, [mainCategories]);
 
   useEffect(() => {
     const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
@@ -54,84 +54,84 @@ export default function AccountSettings() {
   const handleAddButton = () => {
     if (buttonLabel.trim() !== "") {
       const newButton = {
-        label: buttonLabel,
         group: selectedGroup,
+        label: buttonLabel,
         subgroups: [],
       };
 
-      setMainButtons([...mainButtons, newButton]);
+      setMainCategories([...mainCategories, newButton]);
       setButtonLabel("");
     }
   };
 
   const handleGroupChange = (e) => {
     setSelectedGroup(e.target.value);
-    setSelectedButton("");
-    setSubgroupLabel("");
+    setSelectedCategory("");
+    setSubcategoryLabel("");
   };
 
-  const handleSelectedButtonChange = (e, index) => {
-    setSelectedButton(e.target.value);
-    setSelectedButtonIndex(
-      mainButtons.findIndex((button) => button.label === e.target.value)
+  const handleSelectedCategoryChange = (e, index) => {
+    setSelectedCategory(e.target.value);
+    setSelectedCategoryIndex(
+      mainCategories.findIndex((button) => button.label === e.target.value)
     );
-    setSubgroupLabel("");
+    setSubcategoryLabel("");
   };
 
-  const handleSubgroupLabelChange = (e) => {
-    setSubgroupLabel(e.target.value);
+  const handleSubcategoryLabelChange = (e) => {
+    setSubcategoryLabel(e.target.value);
   };
 
   const handleAddSubgroup = () => {
-    if (subgroupLabel.trim() !== "" && selectedButton !== "") {
-      setMainButtons((prevMainButtons) => {
-        const updatedButtons = [...prevMainButtons];
+    if (subcategoryLabel.trim() !== "" && selectedCategory !== "") {
+      setMainCategories((prevMainCategories) => {
+        const updatedCategories = [...prevMainCategories];
 
-        const buttonToUpdate = updatedButtons.find(
-          (button) => button.label === selectedButton
+        const buttonToUpdate = updatedCategories.find(
+          (button) => button.label === selectedCategory
         );
 
         if (buttonToUpdate) {
           const subgroupExists = buttonToUpdate.subgroups.some(
-            (subgroup) => subgroup.label === subgroupLabel
+            (subgroup) => subgroup.label === subcategoryLabel
           );
 
           if (!subgroupExists) {
             buttonToUpdate.subgroups.push({
-              label: subgroupLabel,
-              group: selectedGroup,
+              label: subcategoryLabel,
+              category: selectedGroup,
             });
           }
         }
 
-        return updatedButtons;
+        return updatedCategories;
       });
 
-      setSubgroupLabel("");
+      setSubcategoryLabel("");
     }
   };
 
   const confirmDelete = () => {
     if (showDeleteConfirmation) {
-      const updatedButtons = mainButtons.filter(
+      const updatedCategories = mainCategories.filter(
         (button) => button.label !== showDeleteConfirmation
       );
-      setMainButtons(updatedButtons);
-      setSelectedButton("");
+      setMainCategories(updatedCategories);
+      setSelectedCategory("");
       setShowDeleteConfirmation(null);
     }
   };
 
   const confirmDeleteSubgroup = () => {
     if (showDeleteSubgroupConfirmation) {
-      const updatedButtons = [...mainButtons];
-      updatedButtons[selectedButtonIndex].subgroups = updatedButtons[
-        selectedButtonIndex
+      const updatedCategories = [...mainCategories];
+      updatedCategories[selectedCategoryIndex].subgroups = updatedCategories[
+        selectedCategoryIndex
       ].subgroups.filter(
         (subgroup) =>
-          subgroup.label !== showDeleteSubgroupConfirmation.subgroupLabel
+          subgroup.label !== showDeleteSubgroupConfirmation.subcategoryLabel
       );
-      setMainButtons(updatedButtons);
+      setMainCategories(updatedCategories);
       setShowDeleteSubgroupConfirmation(null);
     }
   };
@@ -152,7 +152,7 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mt-24">
       <button onClick={() => handleToggle(0)}>
         <h1 className="mx-auto text-4xl tracking-wider text-amber-400">
           INITIAL BALANCE
@@ -228,17 +228,17 @@ export default function AccountSettings() {
       )}
       {isVisible[2] && (
         <div className="flex flex-row flex-wrap justify-center">
-          {mainButtons
+          {mainCategories
             .filter((button) => button.group === selectedGroup)
             .map((button, index) => (
               <div key={index}>
                 <label className="flex px-2 mt-3">
                   <input
                     type="radio"
-                    name="userButtons"
+                    name="userCategories"
                     value={button.label}
-                    checked={selectedButton === button.label}
-                    onChange={(e) => handleSelectedButtonChange(e, index)}
+                    checked={selectedCategory === button.label}
+                    onChange={(e) => handleSelectedCategoryChange(e, index)}
                     className="appearance-none peer"
                   />
                   <div className="px-2 mt-2 font-bold duration-300 ease-in-out border rounded-l h-7 text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
@@ -276,13 +276,13 @@ export default function AccountSettings() {
               </div>
             ))}
 
-          {selectedButton && (
+          {selectedCategory && (
             <div className="flex flex-col justify-center mt-10 basis-full">
               <input
                 type="text"
                 placeholder="Enter sub-category name"
-                value={subgroupLabel}
-                onChange={handleSubgroupLabelChange}
+                value={subcategoryLabel}
+                onChange={handleSubcategoryLabelChange}
                 className="px-3 mx-auto mt-2 text-center"
               />
               <button
@@ -292,14 +292,14 @@ export default function AccountSettings() {
                 Add Sub-category
               </button>
               <div className="flex flex-row flex-wrap justify-center">
-                {mainButtons[selectedButtonIndex].subgroups
-                  .filter((subgroup) => subgroup.group === selectedGroup)
+                {mainCategories[selectedCategoryIndex].subgroups
+                  .filter((subgroup) => subgroup.category === selectedGroup)
                   .map((subgroup, sIndex) => (
                     <div key={sIndex}>
                       <label className="flex px-2 mt-3">
                         <input
                           type="radio"
-                          name="subgroupButtons"
+                          name="subgroupCategories"
                           value={subgroup.label}
                           className="appearance-none peer"
                         />
@@ -310,8 +310,8 @@ export default function AccountSettings() {
                           onClick={() =>
                             setShowDeleteSubgroupConfirmation({
                               buttonLabel:
-                                mainButtons[selectedButtonIndex].label,
-                              subgroupLabel: subgroup.label,
+                                mainCategories[selectedCategoryIndex].label,
+                              subcategoryLabel: subgroup.label,
                             })
                           }
                           className="px-2 mt-2 font-bold bg-red-700 border rounded-r h-7 text-amber-400 border-amber-400"
@@ -322,13 +322,13 @@ export default function AccountSettings() {
 
                       {showDeleteSubgroupConfirmation &&
                         showDeleteSubgroupConfirmation.buttonLabel ===
-                          mainButtons[selectedButtonIndex].label &&
-                        showDeleteSubgroupConfirmation.subgroupLabel ===
+                          mainCategories[selectedCategoryIndex].label &&
+                        showDeleteSubgroupConfirmation.subcategoryLabel ===
                           subgroup.label && (
                           <div className="absolute z-50 w-3/4 p-2 text-center transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black rounded top-1/2 left-1/2">
                             <p className="pb-4">
                               Are you sure you want to delete this{" "}
-                              {mainButtons[selectedButtonIndex].label}{" "}
+                              {mainCategories[selectedCategoryIndex].label}{" "}
                               sub-category?
                             </p>
                             <button

@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import DatePicker from "./DatePicker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function MainSection() {
   const [selectedGroup, setSelectedGroup] = useState("Expense");
-  const [selectedButtonIndex, setSelectedButtonIndex] = useState(null);
-  const [selectedButton, setSelectedButton] = useState("");
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [formEntries, setFormEntries] = useState([]);
@@ -13,7 +14,9 @@ export default function MainSection() {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
-  const [parsedButtons, setParsedButtons] = useState([]);
+  const [parsedCategories, setParsedCategories] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
@@ -25,8 +28,8 @@ export default function MainSection() {
         amount: "100",
         date: new Date().toLocaleDateString(),
         group: "Expense",
-        userButtons: "Example",
-        subgroupButtons: "Example 2",
+        category: "Example",
+        subcategory: "Example 2",
       };
 
       console.log("Setting Initial Entry:", initialEntry);
@@ -38,19 +41,19 @@ export default function MainSection() {
       setFormEntries(savedEntries);
     }
 
-    const savedButtons = JSON.parse(localStorage.getItem("buttons"));
+    const savedCategories = JSON.parse(localStorage.getItem("groups"));
 
-    if (!savedButtons || savedButtons.length === 0) {
+    if (!savedCategories || savedCategories.length === 0) {
       const initialButtons = [
-        { label: "DefaultButton1", group: "Expense", subgroups: [] },
-        { label: "DefaultButton2", group: "Income", subgroups: [] },
+        { label: "Default Expense Category", group: "Expense", subgroups: [] },
+        { label: "Default IncomeCategory", group: "Income", subgroups: [] },
       ];
 
-      localStorage.setItem("buttons", JSON.stringify(initialButtons));
+      localStorage.setItem("groups", JSON.stringify(initialButtons));
 
-      setParsedButtons(initialButtons);
+      setParsedCategories(initialButtons);
     } else {
-      setParsedButtons(savedButtons);
+      setParsedCategories(savedCategories);
     }
   }, []);
 
@@ -62,17 +65,17 @@ export default function MainSection() {
   useEffect(() => {
     const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
     setInitialBalance(initialBalance);
-  }, []);
+  }, [initialBalance]);
 
-   useEffect(() => {
-     if (initialBalance) {
-       setCurrentBalance(initialBalance);
-     }
-   }, [initialBalance]);
+  useEffect(() => {
+    if (initialBalance) {
+      setCurrentBalance(initialBalance);
+    }
+  }, [initialBalance]);
 
-   useEffect(() => {
-     setCurrentBalance(initialBalance);
-   }, [initialBalance]);
+  useEffect(() => {
+    setCurrentBalance(initialBalance);
+  }, [initialBalance]);
 
   useEffect(() => {
     const calculatedBalance = JSON.parse(
@@ -108,18 +111,18 @@ export default function MainSection() {
   }, [formEntries]);
 
   const handleMainButtonChange = (e) => {
-    setSelectedGroup(e.target.value);
-    setSelectedButton("");
+    setSelectedCategory(e.target.value);
+    setSelectedGroup("");
   };
 
-  const handleSelectedButtonChange = (e, index) => {
-    setSelectedButton(e.target.value);
-    setSelectedButtonIndex(
-      parsedButtons.findIndex((button) => button.label === e.target.value)
+  const handleSelectedGroupChange = (e, index) => {
+    setSelectedGroup(e.target.value);
+    setSelectedCategoryIndex(
+      parsedCategories.findIndex((button) => button.label === e.target.value)
     );
   };
 
-  console.log(parsedButtons);
+  console.log(parsedCategories);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -129,16 +132,16 @@ export default function MainSection() {
     const newEntry = {
       amount: formData.get("Amount"),
       date: formData.get("Date"),
-      group: selectedGroup,
-      userButtons: selectedButton,
-      subgroupButtons: formData.get("subgroupButtons"),
+      group: selectedCategory,
+      category: selectedGroup,
+      subcategory: formData.get("subcategory"),
     };
 
     setFormEntries([...formEntries, newEntry]);
 
     const entryAmount = parseFloat(newEntry.amount);
     const balanceChange =
-      selectedGroup === "Income" ? entryAmount : -entryAmount;
+      selectedCategory === "Income" ? entryAmount : -entryAmount;
 
     setCurrentBalance(parseFloat(currentBalance) + parseFloat(balanceChange));
 
@@ -197,8 +200,6 @@ export default function MainSection() {
 
   return (
     <>
-      <DatePicker />
-
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
         {currentBalance}
       </div>
@@ -216,22 +217,29 @@ export default function MainSection() {
           onChange={(e) => setAmount(e.target.value)}
           className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
         ></input>
-        <input
-          required
-          type="date"
-          name="Date"
-          value={date}
-          placeholder="Enter the date"
-          onChange={(e) => setDate(e.target.value)}
-          className="w-1/2 mx-auto text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
-        ></input>
+        <div className="flex flex-col self-center justify-center text-amber-400 ">
+          <label htmlFor="myDateInput" className="self-center">
+            Select a date:
+          </label>
+          <DatePicker
+            id="myDateInput"
+            name="Date"
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            dateFormat={dateFormat}
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            className="text-center bg-transparent border-2 rounded appearance-none h-7 border-amber-400"  
+          />
+        </div>
         <div className="flex flex-row justify-center pb-3 border-b-2 border-dashed border-amber-400/50">
           <label>
             <input
               type="radio"
               name="mainGroup"
               value="Expense"
-              checked={selectedGroup === "Expense"}
+              checked={selectedCategory === "Expense"}
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -244,7 +252,7 @@ export default function MainSection() {
               type="radio"
               name="mainGroup"
               value="Income"
-              checked={selectedGroup === "Income"}
+              checked={selectedCategory === "Income"}
               onChange={handleMainButtonChange}
               className="appearance-none peer"
             />
@@ -254,8 +262,8 @@ export default function MainSection() {
           </label>
         </div>
         <div className="flex flex-row flex-wrap justify-center pb-3 border-b-2 border-dashed border-amber-400/50">
-          {parsedButtons
-            .filter((button) => button.group === selectedGroup)
+          {parsedCategories
+            .filter((button) => button.group === selectedCategory)
             .map((button, index) => (
               <div key={index}>
                 <label className="flex px-2 mt-3">
@@ -263,8 +271,8 @@ export default function MainSection() {
                     type="radio"
                     name="userButtons"
                     value={button.label}
-                    checked={selectedButton === button.label}
-                    onChange={(e) => handleSelectedButtonChange(e, index)}
+                    checked={selectedGroup === button.label}
+                    onChange={(e) => handleSelectedGroupChange(e, index)}
                     className="appearance-none peer"
                   />
                   <div className="px-2 mx-1 font-bold duration-300 ease-in-out border rounded text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
@@ -275,17 +283,17 @@ export default function MainSection() {
             ))}
         </div>
         <div className="flex flex-row flex-wrap justify-center">
-          {selectedButtonIndex !== null &&
-            parsedButtons[selectedButtonIndex] &&
-            parsedButtons[selectedButtonIndex].subgroups &&
-            parsedButtons[selectedButtonIndex].subgroups
-              .filter((subgroup) => subgroup.group === selectedGroup)
+          {selectedCategoryIndex !== null &&
+            parsedCategories[selectedCategoryIndex] &&
+            parsedCategories[selectedCategoryIndex].subgroups &&
+            parsedCategories[selectedCategoryIndex].subgroups
+              .filter((subgroup) => subgroup.category === selectedCategory)
               .map((subgroup, sIndex) => (
                 <div key={sIndex}>
                   <label className="flex px-2 mt-3">
                     <input
                       type="radio"
-                      name="subgroupButtons"
+                      name="subcategory"
                       value={subgroup.label}
                       className="appearance-none peer"
                     />
@@ -327,10 +335,10 @@ export default function MainSection() {
                     {entry.group}
                   </td>
                   <td className="px-1 border border-amber-400">
-                    {entry.userButtons}
+                    {entry.category}
                   </td>
                   <td className="px-1 border border-amber-400">
-                    {entry.subgroupButtons}
+                    {entry.subcategory}
                   </td>
                   <td className="px-1 bg-red-700 border border-amber-400">
                     <button
