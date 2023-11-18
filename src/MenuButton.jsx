@@ -1,15 +1,14 @@
-import { useState } from "react"
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function MenuButton(){
+export default function MenuButton() {
+  const [isClicked, setIsClicked] = useState();
 
-const [isClicked, setIsClicked] = useState()
+  const menuClick = () => {
+    setIsClicked(!isClicked);
+  };
 
-const menuClick = ()=>{
-  setIsClicked(!isClicked);
-}
-
-console.log(isClicked)
+  console.log(isClicked);
 
   return (
     <>
@@ -19,6 +18,13 @@ console.log(isClicked)
         id="menuButton"
       >
         <div className="flex flex-col m-auto">
+          <Link
+            to="/MoneyLeaks/signup"
+            className="mx-auto mb-16 text-3xl text-amber-400"
+            onClick={menuClick}
+          >
+            Signup
+          </Link>
           <Link
             to="/MoneyLeaks/login"
             className="mx-auto mb-16 text-3xl text-amber-400"

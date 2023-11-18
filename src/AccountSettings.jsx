@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function AccountSettings() {
   const [buttonLabel, setButtonLabel] = useState("");
@@ -12,8 +12,9 @@ export default function AccountSettings() {
     useState(null);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [initialBalance, setInitialBalance] = useState(null);
-
   const [isVisible, setIsVisible] = useState(false);
+  const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
+  const [currency, setCurrency] = useState("");
 
   useEffect(() => {
     let savedCategories = JSON.parse(localStorage.getItem("groups"));
@@ -46,6 +47,18 @@ export default function AccountSettings() {
     if (initialBalance)
       localStorage.setItem("initialBalance", JSON.stringify(initialBalance));
   }, [initialBalance]);
+
+  useEffect(() => {
+    const currency = JSON.parse(localStorage.getItem("currency"));
+    if (currency) {
+      setCurrency(currency);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currency)
+      localStorage.setItem("currency", JSON.stringify(currency));
+  }, [currency]);
 
   const handleButtonLabelChange = (e) => {
     setButtonLabel(e.target.value);
@@ -151,6 +164,16 @@ export default function AccountSettings() {
     });
   };
 
+  const handleFormatChange = (e) => {
+    setDateFormat(e.target.value);
+  };
+
+  const handleCurrencyChange = (e) => {
+    setCurrency(e.target.value);
+  };
+
+  console.log(currency)
+
   return (
     <div className="flex flex-col mt-24">
       <button onClick={() => handleToggle(0)}>
@@ -174,6 +197,17 @@ export default function AccountSettings() {
           BUDGET SETUP
         </h1>
       </button>
+      {isVisible[1] && (
+        <div className="pb-4 mx-auto">
+          <input
+            type="number"
+            placeholder="Enter initial balance"
+            value={initialBalance}
+            onChange={handleStartingBalanceChange}
+            className="text-center"
+          />
+        </div>
+      )}
       <button onClick={() => handleToggle(2)}>
         <h1 className="mx-auto text-4xl tracking-wider text-amber-400">
           CATEGORY SETUP
@@ -350,6 +384,49 @@ export default function AccountSettings() {
               </div>
             </div>
           )}
+        </div>
+      )}
+      <button onClick={() => handleToggle(3)}>
+        <h1 className="mx-auto text-4xl tracking-wider text-amber-400">
+          CURRENCY & DATE FORMAT
+        </h1>
+      </button>
+      {isVisible[3] && (
+        <div className="flex flex-col pb-4 mx-auto">
+          <label htmlFor="currencySelect" className="text-amber-400">
+            Select currency:
+          </label>
+          <select
+            id="currencySelect"
+            value={currency}
+            onChange={handleCurrencyChange}
+          >
+            <option value="US$">USD</option>
+            <option value="€">EUR</option>
+            <option value="¥">JPY</option>
+            <option value="£">GBP</option>
+            <option value="¥">CNY</option>
+            <option value="A$">AUD</option>
+            <option value="C$">CAD</option>
+            <option value="CHF">CHF</option>
+            <option value="HK$">HKD</option>
+            <option value="S$">SGD</option>
+            <option value="kr">SEK</option>
+            <option value="₩">KRW</option>
+          </select>
+
+          <label htmlFor="dateFormatSelect" className="text-amber-400">
+            Select date format:
+          </label>
+          <select
+            id="dateFormatSelect"
+            value={dateFormat}
+            onChange={handleFormatChange}
+          >
+            <option value="dd-MM-yyyy">DD-MM-YYYY</option>
+            <option value="MM-dd-yyyy">MM-DD-YYYY</option>
+            <option value="yyyy-MM-dd">YYYY-MM-DD</option>
+          </select>
         </div>
       )}
     </div>

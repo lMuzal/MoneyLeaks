@@ -16,6 +16,12 @@ export default function LoginPage() {
           placeholder="Enter Password"
           className="w-3/4 px-2 mx-auto mt-3 text-center h-7"
         />
+        <div className="flex flex-row justify-center pt-3 text-amber-400">
+          <label>
+            Keep me logged in
+            <input type="checkbox" className="float-left mt-2 mr-1 checked:bg-amber-400" />
+          </label>
+        </div>
         <button className="w-1/2 px-2 mx-auto my-6 border-2 border-amber-400 text-amber-400">
           Login
         </button>

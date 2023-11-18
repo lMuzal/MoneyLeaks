@@ -17,7 +17,16 @@ export default function MainSection() {
   const [parsedCategories, setParsedCategories] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
+  const [currency, setCurrency] = useState("");
 
+  useEffect(() => {
+    const currency = JSON.parse(localStorage.getItem("currency"));
+    if (currency) {
+      setCurrency(currency);
+    }
+  }, [currency]);
+
+  console.log(currency)
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
 
@@ -201,7 +210,7 @@ export default function MainSection() {
   return (
     <>
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
-        {currentBalance}
+        {currentBalance + " " + currency}
       </div>
       <form
         className="flex flex-col justify-center"
@@ -230,7 +239,7 @@ export default function MainSection() {
             showMonthDropdown
             showYearDropdown
             dropdownMode="select"
-            className="text-center bg-transparent border-2 rounded appearance-none h-7 border-amber-400"  
+            className="text-center bg-transparent border-2 rounded appearance-none h-7 border-amber-400"
           />
         </div>
         <div className="flex flex-row justify-center pb-3 border-b-2 border-dashed border-amber-400/50">
@@ -328,7 +337,7 @@ export default function MainSection() {
               {formEntries.map((entry, index) => (
                 <tr className="border border-amber-400" key={index}>
                   <td className="px-1 border border-amber-400">
-                    {entry.amount}
+                    {entry.amount + " " + currency}
                   </td>
                   <td className="px-1 border border-amber-400">{entry.date}</td>
                   <td className="px-1 border border-amber-400">

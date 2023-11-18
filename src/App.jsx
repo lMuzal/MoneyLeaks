@@ -4,6 +4,7 @@ import MainSection from "./MainSection";
 import LoginPage from "./Loginpage";
 import AccountSettings from "./AccountSettings";
 import Statistics from "./Statistics";
+import SignupPage from "./SignupPage";
 
 export default function App() {
   return (
@@ -11,10 +12,10 @@ export default function App() {
       <Router>
         <Header></Header>
         <Routes>
+          <Route path="/MoneyLeaks/signup" element={<SignupPage />} />
           <Route path="/MoneyLeaks/login" element={<LoginPage />} />
           <Route path="/MoneyLeaks" element={<MainSection />} />
           <Route path="/MoneyLeaks/statistics" element={<Statistics />} />
-
           <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
         </Routes>
       </Router>
