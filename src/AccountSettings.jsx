@@ -13,7 +13,7 @@ export default function AccountSettings() {
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [initialBalance, setInitialBalance] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
+  const [dateFormat, setDateFormat] = useState("");
   const [currency, setCurrency] = useState("");
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export default function AccountSettings() {
 
     if (!savedCategories || savedCategories.length === 0) {
       savedCategories = [
-        { label: "Default Expense Category", group: "Expense", subgroups: [] },
-        { label: "Default Income Category", group: "Income", subgroups: [] },
+        { label: "Bills", group: "Expense", subgroups: [] },
+        { label: "Salary", group: "Income", subgroups: [] },
       ];
 
       localStorage.setItem("groups", JSON.stringify(savedCategories));
@@ -48,6 +48,8 @@ export default function AccountSettings() {
       localStorage.setItem("initialBalance", JSON.stringify(initialBalance));
   }, [initialBalance]);
 
+  console.log(initialBalance);
+
   useEffect(() => {
     const currency = JSON.parse(localStorage.getItem("currency"));
     if (currency) {
@@ -59,6 +61,17 @@ export default function AccountSettings() {
     if (currency)
       localStorage.setItem("currency", JSON.stringify(currency));
   }, [currency]);
+
+  useEffect(() => {
+    const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
+    if (dateFormat) {
+      setDateFormat(dateFormat);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (dateFormat) localStorage.setItem("dateFormat", JSON.stringify(dateFormat));
+  }, [dateFormat]);
 
   const handleButtonLabelChange = (e) => {
     setButtonLabel(e.target.value);
@@ -261,7 +274,7 @@ export default function AccountSettings() {
         </div>
       )}
       {isVisible[2] && (
-        <div className="flex flex-row flex-wrap justify-center">
+        <div className="flex flex-row flex-wrap justify-center mb-4">
           {mainCategories
             .filter((button) => button.group === selectedGroup)
             .map((button, index) => (
@@ -311,7 +324,7 @@ export default function AccountSettings() {
             ))}
 
           {selectedCategory && (
-            <div className="flex flex-col justify-center mt-10 basis-full">
+            <div className="flex flex-col justify-center basis-full">
               <input
                 type="text"
                 placeholder="Enter sub-category name"

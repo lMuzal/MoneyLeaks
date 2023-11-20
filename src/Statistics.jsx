@@ -31,9 +31,9 @@ export default function Statistics() {
     const filteredEntries = formEntries.filter((entry) => {
       if (
         (filterGroup === "all" || entry.group === filterGroup) &&
-        (filterCategory === "all" || entry.userButtons === filterCategory) &&
+        (filterCategory === "all" || entry.category === filterCategory) &&
         (filterSubcategory === "all" ||
-          entry.subgroupButtons === filterSubcategory)
+          entry.subcategory === filterSubcategory)
       ) {
         return true;
       }
@@ -111,7 +111,7 @@ export default function Statistics() {
                   new Set(
                     formEntries
                       .filter((entry) => entry.group === filterGroup)
-                      .map((entry) => entry.userButtons)
+                      .map((entry) => entry.category)
                   )
                 ).map((category) => (
                   <option key={category} value={category}>
@@ -135,9 +135,9 @@ export default function Statistics() {
                       .filter(
                         (entry) =>
                           entry.group === filterGroup &&
-                          entry.userButtons === filterCategory
+                          entry.category === filterCategory
                       )
-                      .map((entry) => entry.subgroupButtons)
+                      .map((entry) => entry.subcategory)
                   )
                 ).map((subcategory) => (
                   <option key={subcategory} value={subcategory}>
@@ -198,10 +198,10 @@ export default function Statistics() {
                           {entry.group}
                         </td>
                         <td className="px-1 border border-amber-400">
-                          {entry.userButtons}
+                          {entry.category}
                         </td>
                         <td className="px-1 border border-amber-400">
-                          {entry.subgroupButtons}
+                          {entry.subcategory}
                         </td>
                       </tr>
                     ))}

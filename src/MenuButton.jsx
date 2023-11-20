@@ -19,13 +19,6 @@ export default function MenuButton() {
       >
         <div className="flex flex-col m-auto">
           <Link
-            to="/MoneyLeaks/signup"
-            className="mx-auto mb-16 text-3xl text-amber-400"
-            onClick={menuClick}
-          >
-            Signup
-          </Link>
-          <Link
             to="/MoneyLeaks/login"
             className="mx-auto mb-16 text-3xl text-amber-400"
             onClick={menuClick}

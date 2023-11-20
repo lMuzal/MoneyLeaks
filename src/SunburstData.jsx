@@ -20,28 +20,28 @@ const convertToSunburstData = (data) => {
       sunburstData.children.push(currentGroup);
     }
 
-    if (entry.userButtons) {
+    if (entry.category) {
       let currentUserButton = currentGroup.children.find(
-        (userButton) => userButton.name === entry.userButtons
+        (userButton) => userButton.name === entry.category
       );
 
       if (!currentUserButton) {
         currentUserButton = {
-          name: entry.userButtons,
+          name: entry.category,
           value: 0,
           children: [],
         };
         currentGroup.children.push(currentUserButton);
       }
 
-      if (entry.subgroupButtons) {
+      if (entry.subcategory) {
         let currentSubgroupButton = currentUserButton.children.find(
-          (subgroupButton) => subgroupButton.name === entry.subgroupButtons
+          (subgroupButton) => subgroupButton.name === entry.subcategory
         );
 
         if (!currentSubgroupButton) {
           currentSubgroupButton = {
-            name: entry.subgroupButtons,
+            name: entry.subcategory,
             value: parseInt(entry.amount),
           };
           currentUserButton.children.push(currentSubgroupButton);
@@ -67,11 +67,11 @@ let sunburstData;
 if (!inputData || inputData.length === 0) {
   // Set an initial default value for formEntries
   const initialEntry = {
-    amount: "100", // Set your default amount
+    amount: "0", // Set your default amount
     date: new Date().toLocaleDateString(),
     group: "Expense", // Set your default group
-    userButtons: "DefaultButton", // Set your default button
-    subgroupButtons: "DefaultSubgroup", // Set your default subgroup
+    category: "Example Category", // Set your default button
+    subcategory: "Example Subcategory", // Set your default subgroup
   };
 
   sunburstData = convertToSunburstData([initialEntry]);

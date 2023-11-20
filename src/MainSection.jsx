@@ -26,22 +26,36 @@ export default function MainSection() {
     }
   }, [currency]);
 
-  console.log(currency)
+  useEffect(() => {
+    const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
+    if (dateFormat) {
+      setDateFormat(dateFormat);
+    }
+  }, [dateFormat]);
+
+  useEffect(() => {
+    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
+    setInitialBalance(initialBalance);
+  }, [initialBalance]);
+
+  useEffect(() => {
+    if (currentBalance){
+    const currentBalance = JSON.parse(localStorage.getItem("currentBalance"));
+    setCurrentBalance(currentBalance);}
+    else(setCurrentBalance(initialBalance))
+  }, [currentBalance, initialBalance]);
+
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
 
-    console.log("Saved Entries:", savedEntries);
-
     if (!savedEntries || savedEntries.length === 0) {
       const initialEntry = {
-        amount: "100",
+        amount: "0",
         date: new Date().toLocaleDateString(),
         group: "Expense",
-        category: "Example",
-        subcategory: "Example 2",
+        category: "Example Category",
+        subcategory: "Example Subcategory",
       };
-
-      console.log("Setting Initial Entry:", initialEntry);
 
       localStorage.setItem("formEntries", JSON.stringify([initialEntry]));
 
@@ -54,8 +68,8 @@ export default function MainSection() {
 
     if (!savedCategories || savedCategories.length === 0) {
       const initialButtons = [
-        { label: "Default Expense Category", group: "Expense", subgroups: [] },
-        { label: "Default IncomeCategory", group: "Income", subgroups: [] },
+        { label: "Bills", group: "Expense", subgroups: [] },
+        { label: "Salary", group: "Income", subgroups: [] },
       ];
 
       localStorage.setItem("groups", JSON.stringify(initialButtons));
@@ -72,41 +86,6 @@ export default function MainSection() {
   }, []);
 
   useEffect(() => {
-    const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
-    setInitialBalance(initialBalance);
-  }, [initialBalance]);
-
-  useEffect(() => {
-    if (initialBalance) {
-      setCurrentBalance(initialBalance);
-    }
-  }, [initialBalance]);
-
-  useEffect(() => {
-    setCurrentBalance(initialBalance);
-  }, [initialBalance]);
-
-  useEffect(() => {
-    const calculatedBalance = JSON.parse(
-      localStorage.getItem("currentBalance")
-    );
-    if (calculatedBalance !== null) {
-      setCurrentBalance(calculatedBalance);
-    }
-  }, [initialBalance]);
-
-  useEffect(() => {
-    if (formEntries.length == 0) {
-      setCurrentBalance(initialBalance);
-    }
-  }, [formEntries, initialBalance]);
-
-  useEffect(() => {
-    if (currentBalance)
-      localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
-  }, [currentBalance]);
-
-  useEffect(() => {
     const totalExpense = formEntries
       .filter((entry) => entry.group === "Expense")
       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
@@ -115,9 +94,14 @@ export default function MainSection() {
       .filter((entry) => entry.group === "Income")
       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
 
+    const newCurrentBalance = parseFloat(initialBalance) + parseFloat(totalIncome) - parseFloat(totalExpense);
+
+    setCurrentBalance(newCurrentBalance);
+
     localStorage.setItem("totalExpense", JSON.stringify(totalExpense));
     localStorage.setItem("totalIncome", JSON.stringify(totalIncome));
-  }, [formEntries]);
+    localStorage.setItem("currentBalance", JSON.stringify(newCurrentBalance));
+  }, [formEntries, initialBalance]);
 
   const handleMainButtonChange = (e) => {
     setSelectedCategory(e.target.value);
@@ -130,8 +114,6 @@ export default function MainSection() {
       parsedCategories.findIndex((button) => button.label === e.target.value)
     );
   };
-
-  console.log(parsedCategories);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -152,7 +134,9 @@ export default function MainSection() {
     const balanceChange =
       selectedCategory === "Income" ? entryAmount : -entryAmount;
 
-    setCurrentBalance(parseFloat(currentBalance) + parseFloat(balanceChange));
+    const newCurrentBalance = currentBalance + balanceChange;
+
+    setCurrentBalance(newCurrentBalance);
 
     localStorage.setItem(
       "formEntries",
@@ -163,7 +147,11 @@ export default function MainSection() {
     setDate(new Date().toLocaleDateString());
   };
 
-  console.log(formEntries);
+  useEffect(() => {
+    if (currentBalance) {
+      localStorage.setItem("currentBalance", JSON.stringify(currentBalance));
+    }
+  }, [currentBalance]);
 
   const columnNames = [
     "Amount",
@@ -188,12 +176,20 @@ export default function MainSection() {
       localStorage.setItem("formEntries", JSON.stringify(updatedEntries));
 
       if (deletedEntry.group === "Income") {
-        setCurrentBalance(
-          parseFloat(currentBalance) - parseFloat(deletedEntry.amount)
+        const newCurrentBalance =
+          currentBalance - parseFloat(deletedEntry.amount);
+        setCurrentBalance(newCurrentBalance);
+        localStorage.setItem(
+          "currentBalance",
+          JSON.stringify(newCurrentBalance)
         );
       } else if (deletedEntry.group === "Expense") {
-        setCurrentBalance(
-          parseFloat(currentBalance) + parseFloat(deletedEntry.amount)
+        const newCurrentBalance =
+          currentBalance + parseFloat(deletedEntry.amount);
+        setCurrentBalance(newCurrentBalance);
+        localStorage.setItem(
+          "currentBalance",
+          JSON.stringify(newCurrentBalance)
         );
       }
 
