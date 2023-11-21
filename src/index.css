@@ -10,3 +10,8 @@ body{
 h1{
   font-family: 'Bebas Neue', sans-serif;
 }
+
+.header{
+    background: url(img\narrowDollarBg.jpg) no-repeat center center fixed;
+
+}

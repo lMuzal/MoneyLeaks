@@ -57,7 +57,7 @@ export default function MenuButton() {
       </div>
       <button onClick={menuClick}>
         <i
-          className="absolute top-0 left-0 z-50 m-5 text-2xl duration-1000 ease-in-out fa fa-sharp fa-solid fa-bars text-amber-400 sm:text-4xl sm:m-8 hover:text-amber-600"
+          className="fixed top-0 left-0 z-50 m-5 text-2xl duration-1000 ease-in-out fa fa-sharp fa-solid fa-bars text-amber-400 sm:text-4xl sm:m-8 hover:text-amber-600"
           style={{ rotate: isClicked ? "z 360deg" : "z 0deg" }}
         ></i>
       </button>

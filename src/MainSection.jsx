@@ -39,10 +39,10 @@ export default function MainSection() {
   }, [initialBalance]);
 
   useEffect(() => {
-    if (currentBalance){
-    const currentBalance = JSON.parse(localStorage.getItem("currentBalance"));
-    setCurrentBalance(currentBalance);}
-    else(setCurrentBalance(initialBalance))
+    if (currentBalance) {
+      const currentBalance = JSON.parse(localStorage.getItem("currentBalance"));
+      setCurrentBalance(currentBalance);
+    } else setCurrentBalance(initialBalance);
   }, [currentBalance, initialBalance]);
 
   useEffect(() => {
@@ -94,7 +94,10 @@ export default function MainSection() {
       .filter((entry) => entry.group === "Income")
       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
 
-    const newCurrentBalance = parseFloat(initialBalance) + parseFloat(totalIncome) - parseFloat(totalExpense);
+    const newCurrentBalance =
+      parseFloat(initialBalance) +
+      parseFloat(totalIncome) -
+      parseFloat(totalExpense);
 
     setCurrentBalance(newCurrentBalance);
 
@@ -222,7 +225,7 @@ export default function MainSection() {
           onChange={(e) => setAmount(e.target.value)}
           className="w-1/2 mx-auto mb-3 text-center bg-transparent border-2 rounded h-7 border-amber-400 text-amber-400"
         ></input>
-        <div className="flex flex-col self-center justify-center text-amber-400 ">
+        <div className="flex flex-col self-center justify-center text-amber-400">
           <label htmlFor="myDateInput" className="self-center">
             Select a date:
           </label>

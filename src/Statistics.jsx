@@ -8,6 +8,7 @@ export default function Statistics() {
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterSubcategory, setFilterSubcategory] = useState("all");
+  const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
 
   useEffect(() => {
     const importedBalance = JSON.parse(localStorage.getItem("currentBalance"));
@@ -15,6 +16,13 @@ export default function Statistics() {
       setCurrentBalance(importedBalance);
     }
   }, []);
+
+  useEffect(() => {
+    const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
+    if (dateFormat) {
+      setDateFormat(dateFormat);
+    }
+  }, [dateFormat]);
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
@@ -32,8 +40,7 @@ export default function Statistics() {
       if (
         (filterGroup === "all" || entry.group === filterGroup) &&
         (filterCategory === "all" || entry.category === filterCategory) &&
-        (filterSubcategory === "all" ||
-          entry.subcategory === filterSubcategory)
+        (filterSubcategory === "all" || entry.subcategory === filterSubcategory)
       ) {
         return true;
       }
@@ -192,7 +199,9 @@ export default function Statistics() {
                           {entry.amount}
                         </td>
                         <td className="px-1 border border-amber-400">
-                          {entry.date}
+                          {new Date(entry.date).toLocaleDateString({
+                            format: dateFormat,
+                          })}
                         </td>
                         <td className="px-1 border border-amber-400">
                           {entry.group}
