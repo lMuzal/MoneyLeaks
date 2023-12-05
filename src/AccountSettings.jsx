@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
+import BudgetProgress from "./BudgetProgress";
 
 export default function AccountSettings() {
   const [buttonLabel, setButtonLabel] = useState("");
@@ -58,8 +59,7 @@ export default function AccountSettings() {
   }, []);
 
   useEffect(() => {
-    if (currency)
-      localStorage.setItem("currency", JSON.stringify(currency));
+    if (currency) localStorage.setItem("currency", JSON.stringify(currency));
   }, [currency]);
 
   useEffect(() => {
@@ -70,7 +70,8 @@ export default function AccountSettings() {
   }, []);
 
   useEffect(() => {
-    if (dateFormat) localStorage.setItem("dateFormat", JSON.stringify(dateFormat));
+    if (dateFormat)
+      localStorage.setItem("dateFormat", JSON.stringify(dateFormat));
   }, [dateFormat]);
 
   const handleButtonLabelChange = (e) => {
@@ -185,7 +186,7 @@ export default function AccountSettings() {
     setCurrency(e.target.value);
   };
 
-  console.log(currency)
+  console.log(currency);
 
   return (
     <div className="flex flex-col mt-24">
@@ -211,14 +212,29 @@ export default function AccountSettings() {
         </h1>
       </button>
       {isVisible[1] && (
-        <div className="pb-4 mx-auto">
-          <input
-            type="number"
-            placeholder="Enter initial balance"
-            value={initialBalance}
-            onChange={handleStartingBalanceChange}
-            className="text-center"
-          />
+        <div className="flex flex-col justify-items-center">
+          <div className="flex flex-row justify-center">
+            {mainCategories
+              .filter((button) => button.group === selectedGroup)
+              .map((button, index) => (
+                <div key={index}>
+                  <label className="flex px-2 mt-3">
+                    <input
+                      type="radio"
+                      name="userCategories"
+                      value={button.label}
+                      checked={selectedCategory === button.label}
+                      onChange={(e) => handleSelectedCategoryChange(e, index)}
+                      className="appearance-none peer"
+                    />
+                    <div className="px-2 mt-2 font-bold duration-300 ease-in-out border rounded h-7 text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
+                      {button.label}
+                    </div>
+                  </label>
+                </div>
+              ))}
+          </div>
+          <BudgetProgress />
         </div>
       )}
       <button onClick={() => handleToggle(2)}>
@@ -414,8 +430,8 @@ export default function AccountSettings() {
             value={currency}
             onChange={handleCurrencyChange}
           >
-            <option value="US$">USD</option>
-            <option value="€">EUR</option>
+            <option value="US$">USD (US$)</option>
+            <option value="€">EUR (€)</option>
             <option value="¥">JPY</option>
             <option value="£">GBP</option>
             <option value="¥">CNY</option>
@@ -426,6 +442,7 @@ export default function AccountSettings() {
             <option value="S$">SGD</option>
             <option value="kr">SEK</option>
             <option value="₩">KRW</option>
+            <option value="zł">PLN</option>
           </select>
 
           <label htmlFor="dateFormatSelect" className="text-amber-400">

@@ -4,11 +4,19 @@ import SunburstChart from "./SunburstChart";
 export default function Statistics() {
   const [currentBalance, setCurrentBalance] = useState(null);
   const [formEntries, setFormEntries] = useState([]);
-  //   const [currentMonth] = useState(new Date().getMonth());
+    // const [currentMonth] = useState(new Date().getMonth());
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterSubcategory, setFilterSubcategory] = useState("all");
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
+  const [currency, setCurrency] = useState("");
+
+  useEffect(() => {
+    const currency = JSON.parse(localStorage.getItem("currency"));
+    if (currency) {
+      setCurrency(currency);
+    }
+  }, [currency]);
 
   useEffect(() => {
     const importedBalance = JSON.parse(localStorage.getItem("currentBalance"));
@@ -87,14 +95,15 @@ export default function Statistics() {
     <>
       <div className="flex flex-col justify-center text-bold text-amber-400">
         <p className="mx-auto">Current Balance</p>
-        <p className="mx-auto text-xl font-bold">{currentBalance}</p>
+        <p className="mx-auto text-xl font-bold">
+          {currentBalance + " " + currency}
+        </p>
       </div>
       <div className="flex justify-center w-full pt-8">
         <SunburstChart />
       </div>
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Entries</h2>
-
         <div className="flex justify-center mx-auto mb-3">
           <div className="filter-dropdown">
             <select
@@ -155,71 +164,72 @@ export default function Statistics() {
             </div>
           )}
         </div>
+        {Array.from(entriesByMonth)
+          .sort(([monthA], [monthB]) => new Date(monthB) - new Date(monthA))
+          .map(([month, entries]) => {
+            const totalExpense = monthTotals.get(month).totalExpense;
+            const totalIncome = monthTotals.get(month).totalIncome;
 
-        {Array.from(entriesByMonth).map(([month, entries]) => {
-          const totalExpense = monthTotals.get(month).totalExpense;
-          const totalIncome = monthTotals.get(month).totalIncome;
+            const isIncomeHigher = totalIncome > totalExpense;
+            const isExpenseHigher = totalExpense > totalIncome;
 
-          const isIncomeHigher = totalIncome > totalExpense;
-          const isExpenseHigher = totalExpense > totalIncome;
-
-          return (
-            <div key={month}>
-              <h3 className="mt-4 text-bold">{month}</h3>
-              <p>
-                Total Monthly Expense:{" "}
-                <span className={isExpenseHigher ? "text-red-500" : ""}>
-                  {totalExpense}
-                </span>
-              </p>
-              <p>
-                Total Monthly Income:{" "}
-                <span className={isIncomeHigher ? "text-green-500" : ""}>
-                  {totalIncome}
-                </span>
-              </p>
-              {entries.length > 0 && (
-                <table className="mx-auto text-xs">
-                  <thead className="border border-amber-400">
-                    <tr className="border border-amber-400">
-                      {columnNames.map((columnName, index) => (
-                        <th
-                          className="px-2 border-2 border-amber-400"
-                          key={index}
-                        >
-                          {columnName}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="border border-amber-400">
-                    {entries.map((entry, index) => (
-                      <tr className="border border-amber-400" key={index}>
-                        <td className="px-1 border border-amber-400">
-                          {entry.amount}
-                        </td>
-                        <td className="px-1 border border-amber-400">
-                          {new Date(entry.date).toLocaleDateString({
-                            format: dateFormat,
-                          })}
-                        </td>
-                        <td className="px-1 border border-amber-400">
-                          {entry.group}
-                        </td>
-                        <td className="px-1 border border-amber-400">
-                          {entry.category}
-                        </td>
-                        <td className="px-1 border border-amber-400">
-                          {entry.subcategory}
-                        </td>
+            return (
+              <div key={month}>
+                <h3 className="mt-4 text-bold">{month}</h3>
+                <p>
+                  Total Monthly Expense:{" "}
+                  <span className={isExpenseHigher ? "text-red-500" : ""}>
+                    {totalExpense + " " + currency}
+                  </span>
+                </p>
+                <p>
+                  Total Monthly Income:{" "}
+                  <span className={isIncomeHigher ? "text-green-500" : ""}>
+                    {totalIncome + " " + currency}
+                  </span>
+                </p>
+                {entries.length > 0 && (
+                  <table className="mx-auto text-xs">
+                    <thead className="border border-amber-400">
+                      <tr className="border border-amber-400">
+                        {columnNames.map((columnName, index) => (
+                          <th
+                            className="px-2 border-2 border-amber-400"
+                            key={index}
+                          >
+                            {columnName}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          );
-        })}
+                    </thead>
+                    <tbody className="border border-amber-400">
+                      {entries.map((entry, index) => (
+                        <tr className="border border-amber-400" key={index}>
+                          <td className="px-1 border border-amber-400">
+                            {entry.amount + " " + currency}
+                          </td>
+                          <td className="px-1 border border-amber-400">
+                            {new Date(entry.date).toLocaleDateString({
+                              format: dateFormat,
+                            })}
+                          </td>
+                          <td className="px-1 border border-amber-400">
+                            {entry.group}
+                          </td>
+                          <td className="px-1 border border-amber-400">
+                            {entry.category}
+                          </td>
+                          <td className="px-1 border border-amber-400">
+                            {entry.subcategory}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            );
+          })}
       </div>
     </>
   );

@@ -7,52 +7,55 @@ const convertToSunburstData = (data) => {
   };
 
   data.forEach((entry) => {
-    let currentGroup = sunburstData.children.find(
-      (group) => group.name === entry.group
-    );
-
-    if (!currentGroup) {
-      currentGroup = {
-        name: entry.group,
-        value: 0,
-        children: [],
-      };
-      sunburstData.children.push(currentGroup);
-    }
-
-    if (entry.category) {
-      let currentUserButton = currentGroup.children.find(
-        (userButton) => userButton.name === entry.category
+    // Check if the entry is an expense
+    if (entry.group === "Expense") {
+      let currentGroup = sunburstData.children.find(
+        (group) => group.name === entry.group
       );
 
-      if (!currentUserButton) {
-        currentUserButton = {
-          name: entry.category,
+      if (!currentGroup) {
+        currentGroup = {
+          name: entry.group,
           value: 0,
           children: [],
         };
-        currentGroup.children.push(currentUserButton);
+        sunburstData.children.push(currentGroup);
       }
 
-      if (entry.subcategory) {
-        let currentSubgroupButton = currentUserButton.children.find(
-          (subgroupButton) => subgroupButton.name === entry.subcategory
+      if (entry.category) {
+        let currentUserButton = currentGroup.children.find(
+          (userButton) => userButton.name === entry.category
         );
 
-        if (!currentSubgroupButton) {
-          currentSubgroupButton = {
-            name: entry.subcategory,
-            value: parseInt(entry.amount),
+        if (!currentUserButton) {
+          currentUserButton = {
+            name: entry.category,
+            value: 0,
+            children: [],
           };
-          currentUserButton.children.push(currentSubgroupButton);
+          currentGroup.children.push(currentUserButton);
+        }
+
+        if (entry.subcategory) {
+          let currentSubgroupButton = currentUserButton.children.find(
+            (subgroupButton) => subgroupButton.name === entry.subcategory
+          );
+
+          if (!currentSubgroupButton) {
+            currentSubgroupButton = {
+              name: entry.subcategory,
+              value: parseInt(entry.amount),
+            };
+            currentUserButton.children.push(currentSubgroupButton);
+          } else {
+            currentSubgroupButton.value += parseInt(entry.amount);
+          }
         } else {
-          currentSubgroupButton.value += parseInt(entry.amount);
+          currentUserButton.value += parseInt(entry.amount);
         }
       } else {
-        currentUserButton.value += parseInt(entry.amount);
+        currentGroup.value += parseInt(entry.amount);
       }
-    } else {
-      currentGroup.value += parseInt(entry.amount);
     }
   });
 

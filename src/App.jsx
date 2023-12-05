@@ -17,6 +17,7 @@ export default function App() {
           <Route path="/MoneyLeaks" element={<MainSection />} />
           <Route path="/MoneyLeaks/statistics" element={<Statistics />} />
           <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
+          
         </Routes>
       </Router>
     </>
