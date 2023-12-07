@@ -5,6 +5,7 @@ import LoginPage from "./Loginpage";
 import AccountSettings from "./AccountSettings";
 import Statistics from "./Statistics";
 import SignupPage from "./SignupPage";
+import Budget from "./Budget";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
           <Route path="/MoneyLeaks" element={<MainSection />} />
           <Route path="/MoneyLeaks/statistics" element={<Statistics />} />
           <Route path="/MoneyLeaks/account" element={<AccountSettings />} />
-          
+          <Route path="/MoneyLeaks/budget" element={<Budget />} />
         </Routes>
       </Router>
     </>

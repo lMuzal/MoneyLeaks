@@ -40,6 +40,13 @@ export default function MenuButton() {
             Statistics
           </Link>
           <Link
+            to="/MoneyLeaks/budget"
+            className="mx-auto text-3xl text-amber-400"
+            onClick={menuClick}
+          >
+            Budget
+          </Link>
+          <Link
             to="/MoneyLeaks/account"
             className="mx-auto text-3xl text-amber-400"
             onClick={menuClick}

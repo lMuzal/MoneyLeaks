@@ -1,44 +1,49 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 
-export default function BudgetProgress() {
-  const [completion, setCompletion] = useState(0);
+export default function BudgetProgress(props) {
   const [formEntries, setFormEntries] = useState([]);
   const [currency, setCurrency] = useState("");
+  const [calculatedAmount, setCalculatedAmount] = useState("");
+  const plannedAmount = props.plannedAmount;
+  const categoryName = props.categoryName;
 
   useEffect(() => {
     const currency = JSON.parse(localStorage.getItem("currency"));
     if (currency) {
       setCurrency(currency);
     }
-  }, [currency]);
+  }, []);
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
     setFormEntries(savedEntries);
   }, []);
 
-//   useEffect(() => {
-//     const totalExpense = formEntries
-//       .filter((entry) => entry.group === "Expense")
-//       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
-//   }, [formEntries]);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (completion < 100) {
-        setCompletion(completion + 1);
-      }
-    }, 100);
+    const currentMonth = new Date().getMonth(); 
 
-    return () => clearInterval(interval);
-  }, [completion]);
+    const calculatedEntries = formEntries
+      .filter((entry) => entry.group === "Expense")
+      .filter((entry) => entry.category === categoryName)
+      .filter((entry) => {
+        const entryDate = new Date(entry.date);
+        return entryDate.getMonth() === currentMonth;
+      })
+      .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+    setCalculatedAmount(calculatedEntries);
+  }, [formEntries, categoryName]);
+
+  const percentage = parseFloat(
+    (calculatedAmount / plannedAmount) * 100
+  ).toFixed(1);
 
   const getProgressBarColor = () => {
-    if (completion < 71) {
+    if (percentage < 71) {
       return "bg-green-500";
-    } else if (completion < 86) {
+    } else if (percentage < 86) {
       return "bg-yellow-500";
-    } else if (completion < 99) {
+    } else if (percentage < 99) {
       return "bg-red-500";
     } else {
       return "bg-red-800";
@@ -47,25 +52,20 @@ export default function BudgetProgress() {
 
   return (
     <div className="w-full p-4">
-      <h2 className="mb-2 text-2xl font-bold text-center text-amber-400">
-        Category Name
+      <h2 className="text-xl font-bold text-center text-amber-400">
+        {categoryName}
       </h2>
-      <h2 className="mb-2 text-xl font-bold text-center text-amber-400">
-        {/* {formEntries.map((entry, index) => ( */}
-        {/* //   <div key={index}>{entry.amount + " " + currency}</div> */}
-        {/* ))} */}
+      <h2 className="mb-2 text-lg font-bold text-center text-amber-400">
         <div>
-          {formEntries
-            .filter((entry) => entry.group === "Expense")
-            .reduce((sum, entry) => sum + parseFloat(entry.amount), 0)}{" " + currency}
+          {calculatedAmount + " " + currency} / {plannedAmount + " " + currency}
         </div>
       </h2>
       <div className="flex items-center">
         <div className="relative w-full h-6 bg-gray-300 rounded-full">
-          <p className="absolute mx-auto text-sm font-bold text-center -translate-x-1/2 translate-y-px left-1/2">{`${completion}%`}</p>
+          <p className="absolute mx-auto text-sm font-bold text-center -translate-x-1/2 translate-y-px left-1/2">{`${percentage}%`}</p>
           <div
-            className={`h-full ${getProgressBarColor()} rounded-full transition-all`}
-            style={{ width: `${completion}%` }}
+            className={`h-full ${getProgressBarColor()} rounded-full transition-all max-w-full`}
+            style={{ width: `${percentage}%`}}
           ></div>
         </div>
       </div>

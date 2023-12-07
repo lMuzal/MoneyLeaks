@@ -338,7 +338,11 @@ export default function MainSection() {
                   <td className="px-1 border border-amber-400">
                     {entry.amount + " " + currency}
                   </td>
-                  <td className="px-1 border border-amber-400">{entry.date}</td>
+                  <td className="px-1 border border-amber-400">
+                    {new Date(entry.date).toLocaleDateString({
+                      format: dateFormat,
+                    })}
+                  </td>
                   <td className="px-1 border border-amber-400">
                     {entry.group}
                   </td>

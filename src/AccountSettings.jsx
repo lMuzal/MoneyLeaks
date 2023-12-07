@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import BudgetProgress from "./BudgetProgress";
 
 export default function AccountSettings() {
   const [buttonLabel, setButtonLabel] = useState("");
@@ -16,6 +15,36 @@ export default function AccountSettings() {
   const [isVisible, setIsVisible] = useState(false);
   const [dateFormat, setDateFormat] = useState("");
   const [currency, setCurrency] = useState("");
+  const [budgetCategories, setBudgetCategories] = useState([]);
+
+  useEffect(() => {
+    const savedBudgetCategories = JSON.parse(
+      localStorage.getItem("budgetCategories")
+    );
+    if (savedBudgetCategories) {
+      setBudgetCategories(savedBudgetCategories);
+    }
+  }, []);
+
+  const handleSaveUserCategories = (category, value) => {
+    const updatedUserCategories = [...budgetCategories];
+    const existingCategory = updatedUserCategories.find(
+      (userCategory) => userCategory.category === category
+    );
+
+    if (existingCategory) {
+      existingCategory.value = value;
+    } else {
+      updatedUserCategories.push({ category, value });
+    }
+
+    setBudgetCategories(updatedUserCategories);
+
+    localStorage.setItem(
+      "budgetCategories",
+      JSON.stringify(updatedUserCategories)
+    );
+  };
 
   useEffect(() => {
     let savedCategories = JSON.parse(localStorage.getItem("groups"));
@@ -218,23 +247,42 @@ export default function AccountSettings() {
               .filter((button) => button.group === selectedGroup)
               .map((button, index) => (
                 <div key={index}>
-                  <label className="flex px-2 mt-3">
+                  <label className="flex px-2 my-6">
                     <input
                       type="radio"
-                      name="userCategories"
+                      name="budgetCategories"
                       value={button.label}
                       checked={selectedCategory === button.label}
-                      onChange={(e) => handleSelectedCategoryChange(e, index)}
+                      onClick={(e) => {
+                        handleSelectedCategoryChange(e, index);
+                        handleToggle(4);
+                      }}
                       className="appearance-none peer"
                     />
-                    <div className="px-2 mt-2 font-bold duration-300 ease-in-out border rounded h-7 text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
+                    <div className="px-2 font-bold duration-300 ease-in-out border rounded h-7 text-amber-400 border-amber-400 hover:text-lime-900 hover:bg-amber-400 peer-checked:text-lime-900 peer-checked:bg-amber-500">
                       {button.label}
                     </div>
                   </label>
                 </div>
               ))}
           </div>
-          <BudgetProgress />
+        </div>
+      )}
+      {selectedCategory && isVisible[4] && (
+        <div className="flex flex-col justify-center mb-6 basis-full">
+          <input
+            type="number"
+            placeholder={`Enter value for ${selectedCategory}`}
+            value={
+              budgetCategories.find(
+                (userCategory) => userCategory.category === selectedCategory
+              )?.value || ""
+            }
+            onChange={(e) =>
+              handleSaveUserCategories(selectedCategory, e.target.value)
+            }
+            className="px-3 mx-auto mt-2 text-center"
+          />
         </div>
       )}
       <button onClick={() => handleToggle(2)}>

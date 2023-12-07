@@ -4,7 +4,6 @@ import SunburstChart from "./SunburstChart";
 export default function Statistics() {
   const [currentBalance, setCurrentBalance] = useState(null);
   const [formEntries, setFormEntries] = useState([]);
-    // const [currentMonth] = useState(new Date().getMonth());
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterSubcategory, setFilterSubcategory] = useState("all");
@@ -73,7 +72,6 @@ export default function Statistics() {
       entries.sort((a, b) => new Date(b.date) - new Date(a.date));
     });
 
-    // Calculate total income and expense for each month
     entriesByMonth.forEach((entries, month) => {
       const totalExpense = entries
         .filter((entry) => entry.group === "Expense")
