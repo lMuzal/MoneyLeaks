@@ -1,14 +1,22 @@
 import { useState, useEffect } from "react";
-import SunburstChart from "./SunburstChart";
+// import SunburstChart from "./SunburstChart";
 
 export default function Statistics() {
-  const [currentBalance, setCurrentBalance] = useState(null);
+  const [currentBalance, setCurrentBalance] = useState(0);
   const [formEntries, setFormEntries] = useState([]);
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterSubcategory, setFilterSubcategory] = useState("all");
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
   const [currency, setCurrency] = useState("");
+
+   useEffect(() => {
+    const importedBalance = JSON.parse(localStorage.getItem("currentBalance"));
+    if (importedBalance) {
+      setCurrentBalance(importedBalance);
+    }
+  }, []);
+
 
   useEffect(() => {
     const currency = JSON.parse(localStorage.getItem("currency"));
@@ -17,13 +25,7 @@ export default function Statistics() {
     }
   }, [currency]);
 
-  useEffect(() => {
-    const importedBalance = JSON.parse(localStorage.getItem("currentBalance"));
-    if (importedBalance) {
-      setCurrentBalance(importedBalance);
-    }
-  }, []);
-
+ 
   useEffect(() => {
     const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
     if (dateFormat) {
@@ -94,12 +96,12 @@ export default function Statistics() {
       <div className="flex flex-col justify-center text-bold text-amber-400">
         <p className="mx-auto">Current Balance</p>
         <p className="mx-auto text-xl font-bold">
-          {currentBalance + " " + currency}
+          {currentBalance.toFixed(2) + " " + currency}
         </p>
       </div>
-      <div className="flex justify-center w-full pt-8">
+      {/* <div className="flex justify-center w-full pt-8">
         <SunburstChart />
-      </div>
+      </div> */}
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Entries</h2>
         <div className="flex justify-center mx-auto mb-3">
@@ -177,13 +179,13 @@ export default function Statistics() {
                 <p>
                   Total Monthly Expense:{" "}
                   <span className={isExpenseHigher ? "text-red-500" : ""}>
-                    {totalExpense + " " + currency}
+                    {totalExpense.toFixed(2) + " " + currency}
                   </span>
                 </p>
                 <p>
                   Total Monthly Income:{" "}
                   <span className={isIncomeHigher ? "text-green-500" : ""}>
-                    {totalIncome + " " + currency}
+                    {totalIncome.toFixed(2) + " " + currency}
                   </span>
                 </p>
                 {entries.length > 0 && (
@@ -207,9 +209,7 @@ export default function Statistics() {
                             {entry.amount + " " + currency}
                           </td>
                           <td className="px-1 border border-amber-400">
-                            {new Date(entry.date).toLocaleDateString({
-                              format: dateFormat,
-                            })}
+                            {entry.date}
                           </td>
                           <td className="px-1 border border-amber-400">
                             {entry.group}

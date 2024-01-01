@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars */
+import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function MainSection() {
+  const currentDate = dayjs();
   const [selectedGroup, setSelectedGroup] = useState("Expense");
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(new Date().toLocaleDateString());
   const [formEntries, setFormEntries] = useState([]);
   const [initialBalance, setInitialBalance] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -20,18 +21,22 @@ export default function MainSection() {
   const [currency, setCurrency] = useState("");
 
   useEffect(() => {
-    const currency = JSON.parse(localStorage.getItem("currency"));
-    if (currency) {
-      setCurrency(currency);
-    }
-  }, [currency]);
-
-  useEffect(() => {
     const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
     if (dateFormat) {
       setDateFormat(dateFormat);
     }
   }, [dateFormat]);
+
+  const formattedCurrentDate = currentDate.format(dateFormat);
+
+  console.log(formattedCurrentDate);
+
+  useEffect(() => {
+    const currency = JSON.parse(localStorage.getItem("currency"));
+    if (currency) {
+      setCurrency(currency);
+    }
+  }, [currency]);
 
   useEffect(() => {
     const initialBalance = JSON.parse(localStorage.getItem("initialBalance"));
@@ -51,7 +56,7 @@ export default function MainSection() {
     if (!savedEntries || savedEntries.length === 0) {
       const initialEntry = {
         amount: "0",
-        date: new Date().toLocaleDateString(),
+        date: formattedCurrentDate,
         group: "Expense",
         category: "Example Category",
         subcategory: "Example Subcategory",
@@ -78,7 +83,7 @@ export default function MainSection() {
     } else {
       setParsedCategories(savedCategories);
     }
-  }, []);
+  }, [dateFormat, formattedCurrentDate]);
 
   useEffect(() => {
     const savedEntries = JSON.parse(localStorage.getItem("formEntries")) || [];
@@ -147,7 +152,6 @@ export default function MainSection() {
     );
 
     setAmount("");
-    setDate(new Date().toLocaleDateString());
   };
 
   useEffect(() => {
@@ -206,10 +210,33 @@ export default function MainSection() {
     setShowDeleteConfirmation(null);
   };
 
+  function changeSpecificPartsToLowerCase(inputFormat, partsToChange) {
+    const formatParts = inputFormat.split(/([^a-zA-Z]+)/);
+
+    for (let i = 0; i < formatParts.length; i += 2) {
+      if (partsToChange.includes(formatParts[i])) {
+        formatParts[i] = formatParts[i].toLowerCase();
+      }
+    }
+
+    const result = formatParts.join("");
+    return result;
+  }
+
+  const originalFormat = dateFormat;
+  const partsToChange = ["DD", "YYYY"];
+
+  const modifiedFormat = changeSpecificPartsToLowerCase(
+    originalFormat,
+    partsToChange
+  );
+  console.log(`Modified Format: ${modifiedFormat}`);
+
+
   return (
     <>
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
-        {currentBalance + " " + currency}
+        {currentBalance.toFixed(2) + " " + currency}
       </div>
       <form
         className="flex flex-col justify-center"
@@ -234,7 +261,7 @@ export default function MainSection() {
             name="Date"
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
-            dateFormat={dateFormat}
+            dateFormat={modifiedFormat}
             showMonthDropdown
             showYearDropdown
             dropdownMode="select"
@@ -335,13 +362,11 @@ export default function MainSection() {
             <tbody className="border border-amber-400">
               {formEntries.map((entry, index) => (
                 <tr className="border border-amber-400" key={index}>
-                  <td className="px-1 border border-amber-400">
+                  <td className="px-1 border border-amber- -400">
                     {entry.amount + " " + currency}
                   </td>
                   <td className="px-1 border border-amber-400">
-                    {new Date(entry.date).toLocaleDateString({
-                      format: dateFormat,
-                    })}
+                    {entry.date}
                   </td>
                   <td className="px-1 border border-amber-400">
                     {entry.group}

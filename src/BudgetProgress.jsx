@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 export default function BudgetProgress(props) {
   const [formEntries, setFormEntries] = useState([]);
   const [currency, setCurrency] = useState("");
-  const [calculatedAmount, setCalculatedAmount] = useState("");
+  const [calculatedAmount, setCalculatedAmount] = useState(0);
   const plannedAmount = props.plannedAmount;
   const categoryName = props.categoryName;
 
@@ -46,25 +46,25 @@ export default function BudgetProgress(props) {
     } else if (percentage < 99) {
       return "bg-red-500";
     } else {
-      return "bg-red-800";
+      return "animate-pulse bg-red-800";
     }
   };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-3/4 mx-auto">
       <h2 className="text-xl font-bold text-center text-amber-400">
         {categoryName}
       </h2>
-      <h2 className="mb-2 text-lg font-bold text-center text-amber-400">
+      <h2 className="text-lg font-bold text-center text-amber-400">
         <div>
-          {calculatedAmount + " " + currency} / {plannedAmount + " " + currency}
+          {calculatedAmount.toFixed(2) + " " + currency} / {plannedAmount + " " + currency}
         </div>
       </h2>
       <div className="flex items-center">
         <div className="relative w-full h-6 bg-gray-300 rounded-full">
-          <p className="absolute mx-auto text-sm font-bold text-center -translate-x-1/2 translate-y-px left-1/2">{`${percentage}%`}</p>
+          <p className="absolute z-10 mx-auto text-sm font-bold text-center -translate-x-1/2 translate-y-px left-1/2">{`${percentage}%`}</p>
           <div
-            className={`h-full ${getProgressBarColor()} rounded-full transition-all max-w-full`}
+            className={`h-full ${getProgressBarColor()} rounded-full transition-all max-w-full z-0`}
             style={{ width: `${percentage}%`}}
           ></div>
         </div>

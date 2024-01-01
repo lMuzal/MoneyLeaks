@@ -40,6 +40,7 @@ export default function AccountSettings() {
 
     setBudgetCategories(updatedUserCategories);
 
+    // Use updatedUserCategories here, not budgetCategories
     localStorage.setItem(
       "budgetCategories",
       JSON.stringify(updatedUserCategories)
@@ -235,7 +236,12 @@ export default function AccountSettings() {
           />
         </div>
       )}
-      <button onClick={() => handleToggle(1)}>
+      <button
+        onClick={() => {
+          handleToggle(1);
+          handleToggle(4);
+        }}
+      >
         <h1 className="mx-auto text-4xl tracking-wider text-amber-400">
           BUDGET SETUP
         </h1>
@@ -255,7 +261,6 @@ export default function AccountSettings() {
                       checked={selectedCategory === button.label}
                       onClick={(e) => {
                         handleSelectedCategoryChange(e, index);
-                        handleToggle(4);
                       }}
                       className="appearance-none peer"
                     />
@@ -501,9 +506,9 @@ export default function AccountSettings() {
             value={dateFormat}
             onChange={handleFormatChange}
           >
-            <option value="dd-MM-yyyy">DD-MM-YYYY</option>
-            <option value="MM-dd-yyyy">MM-DD-YYYY</option>
-            <option value="yyyy-MM-dd">YYYY-MM-DD</option>
+            <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+            <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
           </select>
         </div>
       )}
