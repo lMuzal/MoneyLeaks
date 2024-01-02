@@ -236,7 +236,7 @@ export default function MainSection() {
   return (
     <>
       <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
-        {currentBalance.toFixed(2) + " " + currency}
+        {currentBalance + " " + currency}
       </div>
       <form
         className="flex flex-col justify-center"
