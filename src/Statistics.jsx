@@ -170,6 +170,9 @@ export default function Statistics() {
             const totalExpense = monthTotals.get(month).totalExpense;
             const totalIncome = monthTotals.get(month).totalIncome;
 
+            const totalFixedExpense = totalExpense.toFixed(2);
+            const totalFixedIncome = totalIncome.toFixed(2);
+
             const isIncomeHigher = totalIncome > totalExpense;
             const isExpenseHigher = totalExpense > totalIncome;
 
@@ -179,13 +182,13 @@ export default function Statistics() {
                 <p>
                   Total Monthly Expense:{" "}
                   <span className={isExpenseHigher ? "text-red-500" : ""}>
-                    {totalExpense.toFixed(2) + " " + currency}
+                    {totalFixedExpense + " " + currency}
                   </span>
                 </p>
                 <p>
                   Total Monthly Income:{" "}
                   <span className={isIncomeHigher ? "text-green-500" : ""}>
-                    {totalIncome.toFixed(2) + " " + currency}
+                    {totalFixedIncome + " " + currency}
                   </span>
                 </p>
                 {entries.length > 0 && (
