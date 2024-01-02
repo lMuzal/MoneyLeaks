@@ -232,11 +232,19 @@ export default function MainSection() {
   );
   console.log(`Modified Format: ${modifiedFormat}`);
 
+  const displayBalanceText = () => {
+    if (currentBalance === null || currentBalance === 0) {
+      return "There's nothing to see here. Go to settings and set up Initial Balance";
+    } else {
+      return `${currentBalance.toFixed(2)} ${currency}`;
+    }
+  };
+
 
   return (
     <>
-      <div className="flex flex-row justify-center pb-4 text-xl font-bold text-amber-400">
-        {currentBalance + " " + currency}
+      <div className="flex justify-center pb-4 text-xl font-bold text-center text-amber-400">
+        {displayBalanceText()}
       </div>
       <form
         className="flex flex-col justify-center"
@@ -365,9 +373,7 @@ export default function MainSection() {
                   <td className="px-1 border border-amber- -400">
                     {entry.amount + " " + currency}
                   </td>
-                  <td className="px-1 border border-amber-400">
-                    {entry.date}
-                  </td>
+                  <td className="px-1 border border-amber-400">{entry.date}</td>
                   <td className="px-1 border border-amber-400">
                     {entry.group}
                   </td>
