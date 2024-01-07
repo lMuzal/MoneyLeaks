@@ -506,9 +506,9 @@ export default function AccountSettings() {
             value={dateFormat}
             onChange={handleFormatChange}
           >
-            <option value="DD-MM-YYYY">DD-MM-YYYY</option>
-            <option value="MM-DD-YYYY">MM-DD-YYYY</option>
-            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            <option value="DD/MM/YYYY">DD-MM-YYYY</option>
+            <option value="MM/DD/YYYY">MM-DD-YYYY</option>    
+            <option value="YYYY/MM/DD">YYYY-MM-DD</option>
           </select>
         </div>
       )}

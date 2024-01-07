@@ -1,8 +1,11 @@
 /* eslint-disable no-unused-vars */
-import dayjs from "dayjs";
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { SlArrowUp, SlArrowDown } from "react-icons/sl";
 
 export default function MainSection() {
   const currentDate = dayjs();
@@ -19,6 +22,7 @@ export default function MainSection() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
   const [currency, setCurrency] = useState("");
+  const [expandedMonths, setExpandedMonths] = useState([]);
 
   useEffect(() => {
     const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
@@ -230,6 +234,7 @@ export default function MainSection() {
     originalFormat,
     partsToChange
   );
+  console.log(`Original Format: ${originalFormat}`);
   console.log(`Modified Format: ${modifiedFormat}`);
 
   const displayBalanceText = () => {
@@ -240,6 +245,37 @@ export default function MainSection() {
     }
   };
 
+  // Sort and group entries by month
+  const groupedEntries = formEntries.reduce((acc, entry) => {
+    const monthYear = dayjs(entry.date).format("MMMM YYYY");
+    acc[monthYear] = acc[monthYear] || [];
+    acc[monthYear].push(entry);
+    return acc;
+  }, {});
+
+  // Convert the grouped entries object into an array
+   const sortedAndGroupedEntries = Object.entries(groupedEntries)
+     .sort((a, b) => new Date(b[0]) - new Date(a[0])) // Sort entries by month in descending order
+     .map(([monthYear, entries]) => ({
+       monthYear,
+       entries: entries.sort((a, b) => new Date(b.date) - new Date(a.date)), // Sort entries for each month in descending order
+     }));
+
+    const currentMonthYear = dayjs().format("MMMM YYYY");
+    if (!expandedMonths.includes(currentMonthYear)) {
+      setExpandedMonths([currentMonthYear, ...expandedMonths]);
+    }
+
+  // Toggle the expanded/collapsed state of a month
+  const toggleMonth = (monthYear) => {
+    setExpandedMonths((prevExpandedMonths) =>
+      prevExpandedMonths.includes(monthYear)
+        ? prevExpandedMonths.filter((month) => month !== monthYear)
+        : [...prevExpandedMonths, monthYear]
+    );
+  };
+
+  
 
   return (
     <>
@@ -355,47 +391,67 @@ export default function MainSection() {
         </button>
       </form>
       <div className="text-center text-amber-400">
-        <h2 className="mt-3 text-bold">Latest Entries</h2>
-        {formEntries.length > 0 && (
-          <table className="mx-auto text-xs">
-            <thead className="border border-amber-400">
-              <tr className="border border-amber-400">
-                {columnNames.map((columnName, index) => (
-                  <th className="px-2 border-2 border-amber-400" key={index}>
-                    {columnName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="border border-amber-400">
-              {formEntries.map((entry, index) => (
-                <tr className="border border-amber-400" key={index}>
-                  <td className="px-1 border border-amber- -400">
-                    {entry.amount + " " + currency}
-                  </td>
-                  <td className="px-1 border border-amber-400">{entry.date}</td>
-                  <td className="px-1 border border-amber-400">
-                    {entry.group}
-                  </td>
-                  <td className="px-1 border border-amber-400">
-                    {entry.category}
-                  </td>
-                  <td className="px-1 border border-amber-400">
-                    {entry.subcategory}
-                  </td>
-                  <td className="px-1 bg-red-700 border border-amber-400">
-                    <button
-                      onClick={() => handleDeleteEntry(index)}
-                      className="font-bold text-white"
-                    >
-                      X
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <h2 className="mt-3 text-bold">Entries</h2>
+        {sortedAndGroupedEntries.map(({ monthYear, entries }, monthIndex) => (
+          <div key={monthIndex} className="mb-4">
+            <button
+              className="flex flex-row justify-center w-full px-3 py-1 mb-2 text-xl text-amber-400"
+              onClick={() => toggleMonth(monthYear)}
+            >
+              {monthYear}{" "}
+              {expandedMonths.includes(monthYear) ? (
+                <SlArrowDown className="pt-2 pl-2" />
+              ) : (
+                <SlArrowUp className="pt-2 pl-2"/>
+              )}
+            </button>
+            {expandedMonths.includes(monthYear) && entries.length > 0 && (
+              <table className="mx-auto text-xs">
+                <thead className="border border-amber-400">
+                  <tr className="border border-amber-400">
+                    {columnNames.map((columnName, index) => (
+                      <th
+                        className="px-2 border-2 border-amber-400"
+                        key={index}
+                      >
+                        {columnName}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="border border-amber-400">
+                  {entries.map((entry, entryIndex) => (
+                    <tr className="border border-amber-400" key={entryIndex}>
+                      <td className="px-1 border border-amber- -400">
+                        {entry.amount + " " + currency}
+                      </td>
+                      <td className="px-1 border border-amber-400">
+                        {entry.date}
+                      </td>
+                      <td className="px-1 border border-amber-400">
+                        {entry.group}
+                      </td>
+                      <td className="px-1 border border-amber-400">
+                        {entry.category}
+                      </td>
+                      <td className="px-1 border border-amber-400">
+                        {entry.subcategory}
+                      </td>
+                      <td className="px-1 bg-red-700 border border-amber-400">
+                        <button
+                          onClick={() => handleDeleteEntry(entryIndex)}
+                          className="font-bold text-white"
+                        >
+                          X
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        ))}
       </div>
       {showDeleteConfirmation !== null && (
         <div className="modal">

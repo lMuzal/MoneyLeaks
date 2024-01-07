@@ -1,12 +1,23 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 export default function BudgetProgress(props) {
   const [formEntries, setFormEntries] = useState([]);
   const [currency, setCurrency] = useState("");
   const [calculatedAmount, setCalculatedAmount] = useState(0);
+  const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
   const plannedAmount = props.plannedAmount;
   const categoryName = props.categoryName;
+
+  useEffect(() => {
+    const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
+    if (dateFormat) {
+      setDateFormat(dateFormat);
+    }
+  }, [dateFormat]);
 
   useEffect(() => {
     const currency = JSON.parse(localStorage.getItem("currency"));
@@ -21,18 +32,18 @@ export default function BudgetProgress(props) {
   }, []);
 
   useEffect(() => {
-    const currentMonth = new Date().getMonth(); 
+    const currentMonth = dayjs().month();
 
     const calculatedEntries = formEntries
       .filter((entry) => entry.group === "Expense")
       .filter((entry) => entry.category === categoryName)
       .filter((entry) => {
-        const entryDate = new Date(entry.date);
-        return entryDate.getMonth() === currentMonth;
+        const entryDate = dayjs(entry.date, dateFormat);
+        return entryDate.month() === currentMonth;
       })
       .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
     setCalculatedAmount(calculatedEntries);
-  }, [formEntries, categoryName]);
+  }, [formEntries, categoryName, dateFormat]);
 
   const percentage = parseFloat(
     (calculatedAmount / plannedAmount) * 100
@@ -57,7 +68,8 @@ export default function BudgetProgress(props) {
       </h2>
       <h2 className="text-lg font-bold text-center text-amber-400">
         <div>
-          {calculatedAmount.toFixed(2) + " " + currency} / {plannedAmount + " " + currency}
+          {calculatedAmount.toFixed(2) + " " + currency} /{" "}
+          {plannedAmount + " " + currency}
         </div>
       </h2>
       <div className="flex items-center">
@@ -65,7 +77,7 @@ export default function BudgetProgress(props) {
           <p className="absolute z-10 mx-auto text-sm font-bold text-center -translate-x-1/2 translate-y-px left-1/2">{`${percentage}%`}</p>
           <div
             className={`h-full ${getProgressBarColor()} rounded-full transition-all max-w-full z-0`}
-            style={{ width: `${percentage}%`}}
+            style={{ width: `${percentage}%` }}
           ></div>
         </div>
       </div>

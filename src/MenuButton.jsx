@@ -17,45 +17,45 @@ export default function MenuButton() {
         style={{ translate: isClicked ? "0px" : "-2000px" }}
         id="menuButton"
       >
-        <div className="flex flex-col m-auto">
+        <div className="flex flex-col w-full m-auto">
           <Link
             to="/MoneyLeaks/login"
-            className="mx-auto mb-16 text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto mb-16 text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Log In
           </Link>
           <Link
             to="/MoneyLeaks"
-            className="mx-auto text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Home
           </Link>
           <Link
             to="/MoneyLeaks/statistics"
-            className="mx-auto text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Statistics
           </Link>
           <Link
             to="/MoneyLeaks/budget"
-            className="mx-auto text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Budget
           </Link>
           <Link
             to="/MoneyLeaks/account"
-            className="mx-auto text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Account Settings
           </Link>
           <Link
             to="/MoneyLeaks/login"
-            className="mx-auto mt-16 text-3xl text-amber-400"
+            className="w-full pb-2 mx-auto mt-16 text-3xl text-center transition duration-500 ease-in-out text-amber-400 hover:text-black hover:bg-amber-400"
             onClick={menuClick}
           >
             Log Out

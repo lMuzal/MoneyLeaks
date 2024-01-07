@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import BudgetProgress from "./BudgetProgress";
 
 export default function BudgetList() {
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(dayjs().month());
+  const [currentYear, setCurrentYear] = useState(dayjs().year());
   const [historicalData, setHistoricalData] = useState([]);
   const [currency, setCurrency] = useState("");
   const [budgetCategories, setBudgetCategories] = useState([]);
@@ -24,8 +25,8 @@ export default function BudgetList() {
   }, []);
 
   useEffect(() => {
-    const newMonth = new Date().getMonth();
-    const newYear = new Date().getFullYear();
+    const newMonth = dayjs().month();
+    const newYear = dayjs().year();
 
     if (newMonth !== currentMonth || newYear !== currentYear) {
       const historicalEntry = {

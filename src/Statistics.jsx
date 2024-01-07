@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-// import SunburstChart from "./SunburstChart";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 export default function Statistics() {
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -57,11 +59,7 @@ export default function Statistics() {
     });
 
     filteredEntries.forEach((entry) => {
-      const date = new Date(entry.date);
-      const monthYear = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-      });
+      const monthYear = dayjs(entry.date, dateFormat).format("MMMM YYYY");
 
       if (!entriesByMonth.has(monthYear)) {
         entriesByMonth.set(monthYear, [entry]);
@@ -99,9 +97,6 @@ export default function Statistics() {
           {currentBalance.toFixed(2) + " " + currency}
         </p>
       </div>
-      {/* <div className="flex justify-center w-full pt-8">
-        <SunburstChart />
-      </div> */}
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Entries</h2>
         <div className="flex justify-center mx-auto mb-3">
@@ -165,13 +160,39 @@ export default function Statistics() {
           )}
         </div>
         {Array.from(entriesByMonth)
-          .sort(([monthA], [monthB]) => new Date(monthB) - new Date(monthA))
+          .sort(([monthA], [monthB]) => dayjs(monthB).format(dateFormat) - dayjs(monthA).format(dateFormat))
           .map(([month, entries]) => {
             const totalExpense = monthTotals.get(month).totalExpense;
             const totalIncome = monthTotals.get(month).totalIncome;
 
             const isIncomeHigher = totalIncome > totalExpense;
             const isExpenseHigher = totalExpense > totalIncome;
+
+            function changeSpecificPartsToLowerCase(
+              inputFormat,
+              partsToChange
+            ) {
+              const formatParts = inputFormat.split(/([^a-zA-Z]+)/);
+
+              for (let i = 0; i < formatParts.length; i += 2) {
+                if (partsToChange.includes(formatParts[i])) {
+                  formatParts[i] = formatParts[i].toLowerCase();
+                }
+              }
+
+              const result = formatParts.join("");
+              return result;
+            }
+
+            const originalFormat = dateFormat;
+            const partsToChange = ["DD", "YYYY"];
+
+            const modifiedFormat = changeSpecificPartsToLowerCase(
+              originalFormat,
+              partsToChange
+            );
+            console.log(`Original Format: ${originalFormat}`);
+            console.log(`Modified Format: ${modifiedFormat}`);
 
             return (
               <div key={month}>
