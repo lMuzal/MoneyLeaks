@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
+import { SlArrowUp, SlArrowDown } from "react-icons/sl";
+
 
 export default function Statistics() {
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -11,14 +13,14 @@ export default function Statistics() {
   const [filterSubcategory, setFilterSubcategory] = useState("all");
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
   const [currency, setCurrency] = useState("");
+  const [expandedMonths, setExpandedMonths] = useState([]);
 
-   useEffect(() => {
+  useEffect(() => {
     const importedBalance = JSON.parse(localStorage.getItem("currentBalance"));
     if (importedBalance) {
       setCurrentBalance(importedBalance);
     }
   }, []);
-
 
   useEffect(() => {
     const currency = JSON.parse(localStorage.getItem("currency"));
@@ -27,7 +29,6 @@ export default function Statistics() {
     }
   }, [currency]);
 
- 
   useEffect(() => {
     const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
     if (dateFormat) {
@@ -45,7 +46,7 @@ export default function Statistics() {
   const createMonthTables = () => {
     const entriesByMonth = new Map();
 
-    const monthTotals = new Map(); // To store the total income and expense for each month
+    const monthTotals = new Map();
 
     const filteredEntries = formEntries.filter((entry) => {
       if (
@@ -88,6 +89,14 @@ export default function Statistics() {
   };
 
   const { entriesByMonth, monthTotals } = createMonthTables();
+
+  const toggleMonth = (month) => {
+    setExpandedMonths((prevExpandedMonths) =>
+      prevExpandedMonths.includes(month)
+        ? prevExpandedMonths.filter((m) => m !== month)
+        : [...prevExpandedMonths, month]
+    );
+  };
 
   return (
     <>
@@ -160,13 +169,21 @@ export default function Statistics() {
           )}
         </div>
         {Array.from(entriesByMonth)
-          .sort(([monthA], [monthB]) => dayjs(monthB).format(dateFormat) - dayjs(monthA).format(dateFormat))
+          .sort(
+            ([monthA], [monthB]) =>
+              dayjs(monthB).format(dateFormat) -
+              dayjs(monthA).format(dateFormat)
+          )
           .map(([month, entries]) => {
             const totalExpense = monthTotals.get(month).totalExpense;
             const totalIncome = monthTotals.get(month).totalIncome;
 
             const isIncomeHigher = totalIncome > totalExpense;
             const isExpenseHigher = totalExpense > totalIncome;
+
+            entries.sort(
+              (a, b) => dayjs(b.date, dateFormat) - dayjs(a.date, dateFormat)
+            );
 
             function changeSpecificPartsToLowerCase(
               inputFormat,
@@ -193,58 +210,73 @@ export default function Statistics() {
             );
             console.log(`Original Format: ${originalFormat}`);
             console.log(`Modified Format: ${modifiedFormat}`);
-
             return (
               <div key={month}>
-                <h3 className="mt-4 text-bold">{month}</h3>
-                <p>
-                  Total Monthly Expense:{" "}
-                  <span className={isExpenseHigher ? "text-red-500" : ""}>
-                    {totalExpense.toFixed(2) + " " + currency}
-                  </span>
-                </p>
-                <p>
-                  Total Monthly Income:{" "}
-                  <span className={isIncomeHigher ? "text-green-500" : ""}>
-                    {totalIncome.toFixed(2) + " " + currency}
-                  </span>
-                </p>
-                {entries.length > 0 && (
-                  <table className="mx-auto text-xs">
-                    <thead className="border border-amber-400">
-                      <tr className="border border-amber-400">
-                        {columnNames.map((columnName, index) => (
-                          <th
-                            className="px-2 border-2 border-amber-400"
-                            key={index}
-                          >
-                            {columnName}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="border border-amber-400">
-                      {entries.map((entry, index) => (
-                        <tr className="border border-amber-400" key={index}>
-                          <td className="px-1 border border-amber-400">
-                            {entry.amount + " " + currency}
-                          </td>
-                          <td className="px-1 border border-amber-400">
-                            {entry.date}
-                          </td>
-                          <td className="px-1 border border-amber-400">
-                            {entry.group}
-                          </td>
-                          <td className="px-1 border border-amber-400">
-                            {entry.category}
-                          </td>
-                          <td className="px-1 border border-amber-400">
-                            {entry.subcategory}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <h3 className="mt-4 text-bold">
+                  <button
+                    onClick={() => toggleMonth(month)}
+                    className="flex flex-row justify-center w-full px-3 py-1 mb-2 text-xl text-amber-400"
+                  >
+                    {month}
+                    {expandedMonths.includes(month) ? (
+                      <SlArrowDown className="pt-2 pl-2" />
+                    ) : (
+                      <SlArrowUp className="pt-2 pl-2" />
+                    )}
+                  </button>
+                </h3>
+                {expandedMonths.includes(month) && (
+                  <>
+                    <p>
+                      Total Monthly Expense:{" "}
+                      <span className={isExpenseHigher ? "text-red-500" : ""}>
+                        {totalExpense.toFixed(2) + " " + currency}
+                      </span>
+                    </p>
+                    <p>
+                      Total Monthly Income:{" "}
+                      <span className={isIncomeHigher ? "text-green-500" : ""}>
+                        {totalIncome.toFixed(2) + " " + currency}
+                      </span>
+                    </p>
+                    {entries.length > 0 && (
+                      <table className="mx-auto text-xs">
+                        <thead className="border border-amber-400">
+                          <tr className="border border-amber-400">
+                            {columnNames.map((columnName, index) => (
+                              <th
+                                className="px-2 border-2 border-amber-400"
+                                key={index}
+                              >
+                                {columnName}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="border border-amber-400">
+                          {entries.map((entry, index) => (
+                            <tr className="border border-amber-400" key={index}>
+                              <td className="px-1 border border-amber-400">
+                                {entry.amount + " " + currency}
+                              </td>
+                              <td className="px-1 border border-amber-400">
+                                {entry.date}
+                              </td>
+                              <td className="px-1 border border-amber-400">
+                                {entry.group}
+                              </td>
+                              <td className="px-1 border border-amber-400">
+                                {entry.category}
+                              </td>
+                              <td className="px-1 border border-amber-400">
+                                {entry.subcategory}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </>
                 )}
               </div>
             );

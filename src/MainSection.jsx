@@ -245,28 +245,33 @@ export default function MainSection() {
     }
   };
 
-  // Sort and group entries by month
   const groupedEntries = formEntries.reduce((acc, entry) => {
-    const monthYear = dayjs(entry.date).format("MMMM YYYY");
+    const monthYear = dayjs(entry.date, dateFormat).format("MMMM YYYY");
     acc[monthYear] = acc[monthYear] || [];
     acc[monthYear].push(entry);
     return acc;
   }, {});
 
-  // Convert the grouped entries object into an array
-   const sortedAndGroupedEntries = Object.entries(groupedEntries)
-     .sort((a, b) => new Date(b[0]) - new Date(a[0])) // Sort entries by month in descending order
-     .map(([monthYear, entries]) => ({
-       monthYear,
-       entries: entries.sort((a, b) => new Date(b.date) - new Date(a.date)), // Sort entries for each month in descending order
-     }));
+  const sortedAndGroupedEntries = Object.entries(groupedEntries)
+    .sort(
+      (a, b) =>
+        dayjs(b[0], dateFormat).toDate() - dayjs(a[0], dateFormat).toDate()
+    )
+    .map(([monthYear, entries]) => ({
+      monthYear,
+      entries: entries.sort(
+        (a, b) =>
+          dayjs(b.date, dateFormat).toDate() -
+          dayjs(a.date, dateFormat).toDate()
+      ),
+    }));
 
     const currentMonthYear = dayjs().format("MMMM YYYY");
     if (!expandedMonths.includes(currentMonthYear)) {
       setExpandedMonths([currentMonthYear, ...expandedMonths]);
     }
 
-  // Toggle the expanded/collapsed state of a month
+    
   const toggleMonth = (monthYear) => {
     setExpandedMonths((prevExpandedMonths) =>
       prevExpandedMonths.includes(monthYear)
@@ -274,8 +279,6 @@ export default function MainSection() {
         : [...prevExpandedMonths, monthYear]
     );
   };
-
-  
 
   return (
     <>
@@ -402,7 +405,7 @@ export default function MainSection() {
               {expandedMonths.includes(monthYear) ? (
                 <SlArrowDown className="pt-2 pl-2" />
               ) : (
-                <SlArrowUp className="pt-2 pl-2"/>
+                <SlArrowUp className="pt-2 pl-2" />
               )}
             </button>
             {expandedMonths.includes(monthYear) && entries.length > 0 && (
