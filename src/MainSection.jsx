@@ -245,39 +245,46 @@ export default function MainSection() {
     }
   };
 
+  const currentMonthYear = dayjs().format("MMMM YYYY");
+  // if (!expandedMonths.includes(currentMonthYear)) {
+  //   setExpandedMonths([currentMonthYear, ...expandedMonths]);
+  // }
+
   const groupedEntries = formEntries.reduce((acc, entry) => {
     const monthYear = dayjs(entry.date, dateFormat).format("MMMM YYYY");
-    acc[monthYear] = acc[monthYear] || [];
-    acc[monthYear].push(entry);
+    const year = dayjs(entry.date, dateFormat).format("YYYY");
+    acc[year] = acc[year] || {};
+    acc[year][monthYear] = acc[year][monthYear] || [];
+    acc[year][monthYear].push(entry);
     return acc;
   }, {});
 
   const sortedAndGroupedEntries = Object.entries(groupedEntries)
-    .sort(
-      (a, b) =>
-        dayjs(b[0], dateFormat).toDate() - dayjs(a[0], dateFormat).toDate()
-    )
-    .map(([monthYear, entries]) => ({
-      monthYear,
-      entries: entries.sort(
-        (a, b) =>
-          dayjs(b.date, dateFormat).toDate() -
-          dayjs(a.date, dateFormat).toDate()
-      ),
+    .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+    .map(([year, months]) => ({
+      year,
+      months: Object.entries(months)
+        .sort(
+          (a, b) =>
+            dayjs(b[0], dateFormat).toDate() - dayjs(a[0], dateFormat).toDate()
+        )
+        .map(([monthYear, entries]) => ({
+          monthYear,
+          entries: entries.sort(
+            (a, b) =>
+              dayjs(b.date, dateFormat).toDate() -
+              dayjs(a.date, dateFormat).toDate()
+          ),
+        })),
     }));
 
-    const currentMonthYear = dayjs().format("MMMM YYYY");
-    if (!expandedMonths.includes(currentMonthYear)) {
-      setExpandedMonths([currentMonthYear, ...expandedMonths]);
-    }
-
-    
-  const toggleMonth = (monthYear) => {
-    setExpandedMonths((prevExpandedMonths) =>
-      prevExpandedMonths.includes(monthYear)
-        ? prevExpandedMonths.filter((month) => month !== monthYear)
-        : [...prevExpandedMonths, monthYear]
-    );
+  const toggleMonth = (year, monthYear) => {
+    setExpandedMonths((prevExpandedMonths) => {
+      const key = `${year}-${monthYear}`;
+      return prevExpandedMonths.includes(key)
+        ? prevExpandedMonths.filter((month) => month !== key)
+        : [...prevExpandedMonths, key];
+    });
   };
 
   return (
@@ -395,64 +402,83 @@ export default function MainSection() {
       </form>
       <div className="text-center text-amber-400">
         <h2 className="mt-3 text-bold">Entries</h2>
-        {sortedAndGroupedEntries.map(({ monthYear, entries }, monthIndex) => (
-          <div key={monthIndex} className="mb-4">
+        {sortedAndGroupedEntries.map(({ year, months }, yearIndex) => (
+          <div key={yearIndex} className="mb-4">
             <button
               className="flex flex-row justify-center w-full px-3 py-1 mb-2 text-xl text-amber-400"
-              onClick={() => toggleMonth(monthYear)}
+              onClick={() => toggleMonth(year, months[0].monthYear)}
             >
-              {monthYear}{" "}
-              {expandedMonths.includes(monthYear) ? (
+              {year}{" "}
+              {expandedMonths.includes(`${year}-${months[0].monthYear}`) ? (
                 <SlArrowDown className="pt-2 pl-2" />
               ) : (
                 <SlArrowUp className="pt-2 pl-2" />
               )}
             </button>
-            {expandedMonths.includes(monthYear) && entries.length > 0 && (
-              <table className="mx-auto text-xs">
-                <thead className="border border-amber-400">
-                  <tr className="border border-amber-400">
-                    {columnNames.map((columnName, index) => (
-                      <th
-                        className="px-2 border-2 border-amber-400"
-                        key={index}
-                      >
-                        {columnName}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="border border-amber-400">
-                  {entries.map((entry, entryIndex) => (
-                    <tr className="border border-amber-400" key={entryIndex}>
-                      <td className="px-1 border border-amber- -400">
-                        {entry.amount + " " + currency}
-                      </td>
-                      <td className="px-1 border border-amber-400">
-                        {entry.date}
-                      </td>
-                      <td className="px-1 border border-amber-400">
-                        {entry.group}
-                      </td>
-                      <td className="px-1 border border-amber-400">
-                        {entry.category}
-                      </td>
-                      <td className="px-1 border border-amber-400">
-                        {entry.subcategory}
-                      </td>
-                      <td className="px-1 bg-red-700 border border-amber-400">
-                        <button
-                          onClick={() => handleDeleteEntry(entryIndex)}
-                          className="font-bold text-white"
-                        >
-                          X
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+            {expandedMonths.includes(`${year}-${months[0].monthYear}`) &&
+              months.map(({ monthYear, entries }, monthIndex) => (
+                <div key={monthIndex} className="mb-4">
+                  <button
+                    className="flex flex-row justify-center w-full px-3 py-1 mb-2 text-xl text-amber-400"
+                    onClick={() => toggleMonth(year, monthYear)}
+                  >
+                    {monthYear}{" "}
+                    {expandedMonths.includes(`${year}-${monthYear}`) ? (
+                      <SlArrowDown className="pt-2 pl-2" />
+                    ) : (
+                      <SlArrowUp className="pt-2 pl-2" />
+                    )}
+                  </button>
+                  {expandedMonths.includes(`${year}-${monthYear}`) && (
+                    <table className="mx-auto text-xs">
+                      <thead className="border border-amber-400">
+                        <tr className="border border-amber-400">
+                          {columnNames.map((columnName, index) => (
+                            <th
+                              className="px-2 border-2 border-amber-400"
+                              key={index}
+                            >
+                              {columnName}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="border border-amber-400">
+                        {entries.map((entry, entryIndex) => (
+                          <tr
+                            className="border border-amber-400"
+                            key={entryIndex}
+                          >
+                            <td className="px-1 border border-amber- -400">
+                              {entry.amount + " " + currency}
+                            </td>
+                            <td className="px-1 border border-amber-400">
+                              {entry.date}
+                            </td>
+                            <td className="px-1 border border-amber-400">
+                              {entry.group}
+                            </td>
+                            <td className="px-1 border border-amber-400">
+                              {entry.category}
+                            </td>
+                            <td className="px-1 border border-amber-400">
+                              {entry.subcategory}
+                            </td>
+                            <td className="px-1 bg-red-700 border border-amber-400">
+                              <button
+                                onClick={() => handleDeleteEntry(entryIndex)}
+                                className="font-bold text-white"
+                              >
+                                X
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              ))}
           </div>
         ))}
       </div>

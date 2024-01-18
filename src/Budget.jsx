@@ -56,8 +56,8 @@ export default function BudgetList() {
           />
         ))
       ) : (
-        <h1 className="w-3/4 mx-auto text-3xl font-bold tracking-wider text-center text-amber-400">
-          No budget categories available.<br></br>Go to Account settings {`${'=>'}`} budget setup and start planning
+        <h1 className="w-3/4 mx-auto text-3xl text-center text-amber-400">
+          No budget categories available.<br></br>Go to <br></br>Account settings {`${'=>'}`} budget setup <br></br>and start planning!
         </h1>
       )}
 
