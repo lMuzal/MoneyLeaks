@@ -23,6 +23,7 @@ export default function MainSection() {
   const [dateFormat, setDateFormat] = useState("dd-MM-yyyy");
   const [currency, setCurrency] = useState("");
   const [expandedMonths, setExpandedMonths] = useState([]);
+  const [expandedYears, setExpandedYears] = useState([]);
 
   useEffect(() => {
     const dateFormat = JSON.parse(localStorage.getItem("dateFormat"));
@@ -246,9 +247,9 @@ export default function MainSection() {
   };
 
   const currentMonthYear = dayjs().format("MMMM YYYY");
-  // if (!expandedMonths.includes(currentMonthYear)) {
-  //   setExpandedMonths([currentMonthYear, ...expandedMonths]);
-  // }
+  if (!expandedMonths.includes(currentMonthYear)) {
+    setExpandedMonths([currentMonthYear, ...expandedMonths]);
+  }
 
   const groupedEntries = formEntries.reduce((acc, entry) => {
     const monthYear = dayjs(entry.date, dateFormat).format("MMMM YYYY");
@@ -264,19 +265,28 @@ export default function MainSection() {
     .map(([year, months]) => ({
       year,
       months: Object.entries(months)
-        .sort(
-          (a, b) =>
-            dayjs(b[0], dateFormat).toDate() - dayjs(a[0], dateFormat).toDate()
-        )
+        .sort(([monthA], [monthB]) => {
+          const dateA = dayjs(monthA, "MMMM YYYY");
+          const dateB = dayjs(monthB, "MMMM YYYY");
+          return dateB.diff(dateA);
+        })
         .map(([monthYear, entries]) => ({
           monthYear,
           entries: entries.sort(
-            (a, b) =>
-              dayjs(b.date, dateFormat).toDate() -
-              dayjs(a.date, dateFormat).toDate()
+            (a, b) => dayjs(b.date, dateFormat) - dayjs(a.date, dateFormat)
           ),
         })),
     }));
+
+  useEffect(() => {
+    const currentYear = dayjs().format("YYYY");
+    if (!expandedYears[currentYear]) {
+      setExpandedYears((prevExpandedYears) => ({
+        ...prevExpandedYears,
+        [currentYear]: true,
+      }));
+    }
+  }, []);
 
   const toggleMonth = (year, monthYear) => {
     setExpandedMonths((prevExpandedMonths) => {
@@ -286,6 +296,24 @@ export default function MainSection() {
         : [...prevExpandedMonths, key];
     });
   };
+
+  const toggleYear = (year) => {
+    setExpandedYears((prevExpandedYears) => ({
+      ...prevExpandedYears,
+      [year]: !prevExpandedYears[year],
+    }));
+  };
+
+  useEffect(() => {
+    const currentMonthYear = dayjs().format("MMMM YYYY");
+    const defaultExpandedMonth = `${dayjs().format(
+      "YYYY"
+    )}-${currentMonthYear}`;
+
+    if (!expandedMonths.includes(defaultExpandedMonth)) {
+      setExpandedMonths([defaultExpandedMonth, ...expandedMonths]);
+    }
+  }, []);
 
   return (
     <>
@@ -406,16 +434,17 @@ export default function MainSection() {
           <div key={yearIndex} className="mb-4">
             <button
               className="flex flex-row justify-center w-full px-3 py-1 mb-2 text-xl text-amber-400"
-              onClick={() => toggleMonth(year, months[0].monthYear)}
+              onClick={() => toggleYear(year)}
             >
               {year}{" "}
-              {expandedMonths.includes(`${year}-${months[0].monthYear}`) ? (
+              {expandedYears[year] ? (
                 <SlArrowDown className="pt-2 pl-2" />
               ) : (
                 <SlArrowUp className="pt-2 pl-2" />
               )}
             </button>
-            {expandedMonths.includes(`${year}-${months[0].monthYear}`) &&
+
+            {expandedYears[year] &&
               months.map(({ monthYear, entries }, monthIndex) => (
                 <div key={monthIndex} className="mb-4">
                   <button
